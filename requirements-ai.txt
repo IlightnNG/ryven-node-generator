@@ -1,0 +1,6 @@
+# LangChain 1.2.x）pip install -r requirements-ai.txt
+langchain>=1.2.13,<2
+langchain-core>=1.2.20,<2
+langchain-openai>=1.1.11,<2
+pydantic>=2.12.5,<3
+python-dotenv>=1.2.2,<2
