@@ -26,11 +26,11 @@ load_env()
 
 _JSON_FORMAT_SYSTEM = """Output a single JSON object only (no markdown fences, no extra prose).
 Keys:
-- "message": string, required, Simplified Chinese for the user.
-- "core_logic": string or null — Python for the node try-block; English identifiers/comments. Non-null whenever behavior is requested.
-- "config_patch": object or null — partial node config; null if unchanged.
+- "message": string, required — same language as you would use in chat: English by default; match Chinese (or other) if the user wrote in that language; honor explicit language requests.
+- "core_logic": string or null — Python for the node try-block; English identifiers and comments by default unless the user asked otherwise. Non-null whenever behavior is requested.
+- "config_patch": object or null — partial node config; null if unchanged. Prefer English for title/description/port labels unless the user asked otherwise.
 
-Example: {"message":"好的","core_logic":null,"config_patch":null}
+Example: {"message":"OK.","core_logic":null,"config_patch":null}
 Escape newlines and quotes inside strings."""
 
 JSON_SEP = "<<<JSON>>>"
@@ -199,7 +199,7 @@ def stream_assistant_turn(
     history: list[tuple[str, str]] | None = None,
     on_reply_delta: Callable[[str], None] | None = None,
 ) -> dict[str, Any]:
-    """Stream Chinese text before JSON_SEP; parse JSON for message / core_logic / config_patch."""
+    """Stream user-visible text before JSON_SEP; parse JSON for message / core_logic / config_patch."""
     model = _build_chat_model()
 
     ctx = {
@@ -258,7 +258,7 @@ def stream_assistant_turn(
             parsed = parse_assistant_turn_json(all_text)
         except Exception as e2:
             raise RuntimeError(
-                f"Failed to parse model JSON. After the Chinese explanation, output a single line {JSON_SEP!r} "
+                f"Failed to parse model JSON. After the user-visible explanation, output a single line {JSON_SEP!r} "
                 f"then one JSON object. Parse error: {e2}"
             ) from e2
 

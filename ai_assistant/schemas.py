@@ -8,15 +8,19 @@ from pydantic import BaseModel, Field
 
 
 class AssistantTurn(BaseModel):
-    """One model response: Chinese `message` for the user; English Python in `core_logic`."""
+    """One model response: `message` follows user language (default English); `core_logic` prefers English unless user asked otherwise."""
 
     message: str = Field(
-        description="Short summary for chat history; MUST be Simplified Chinese, same as streamed text before <<<JSON>>>."
+        description=(
+            "Short summary for chat history; MUST match streamed text before <<<JSON>>>. "
+            "English by default; use Chinese (or the user's language) when they wrote in that language; honor explicit language requests."
+        )
     )
     core_logic: Optional[str] = Field(
         default=None,
         description=(
-            "Highest-priority field: Python body inside the try-block. English only. "
+            "Highest-priority field: Python body inside the try-block. English identifiers and comments by default; "
+            "another language only if the user explicitly requested it for code/comments. "
             "The template binds each data input as inK = self.get_input_val(K); inK is already the unwrapped value "
             "when upstream sends Data(payload). Use np.asarray(inK) for arrays; use widgets/literal_eval only when "
             "the port has a line_edit etc. Use self.set_output_val(j, Data(...)) for data outputs. "
