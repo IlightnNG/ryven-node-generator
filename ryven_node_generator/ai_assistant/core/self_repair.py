@@ -65,6 +65,19 @@ def _normalize_cases(raw_cases: Any, node: dict[str, Any]) -> list[dict[str, Any
     return [{"inputs": [1 for _ in data_inputs], "expected_outputs": None, "note": "smoke/multi-input-ones"}]
 
 
+def _inputs_by_port_index(case_inputs: Any, node: dict[str, Any]) -> dict[int, Any]:
+    """Map full port index -> value for StubNode.get_input_val (matches template indexing)."""
+    flat = _map_case_inputs(case_inputs, node)
+    out: dict[int, Any] = {}
+    for k, v in flat.items():
+        if isinstance(k, str) and k.startswith("in") and len(k) > 2:
+            try:
+                out[int(k[2:])] = v
+            except ValueError:
+                continue
+    return out
+
+
 def _map_case_inputs(case_inputs: Any, node: dict[str, Any]) -> dict[str, Any]:
     mapped: dict[str, Any] = {}
     data_indices = _data_input_indices(node)
@@ -90,10 +103,23 @@ def _run_logic_once(core_logic: str, node: dict[str, Any], case: dict[str, Any])
         def __init__(self, payload: Any):
             self.payload = payload
 
+    inputs_by_idx = _inputs_by_port_index(case.get("inputs"), node)
+
     class StubNode:
+        """Minimal Ryven-like surface for self-test (matches common template calls)."""
+
+        def __init__(self, inputs_by_index: dict[int, Any]):
+            self._inputs = inputs_by_index
+
+        def get_input_val(self, index: int):
+            return self._inputs.get(int(index))
+
         def set_output_val(self, index: int, value: Any):
             payload = value.payload if hasattr(value, "payload") else value
             outputs[int(index)] = payload
+
+        def exec_output(self, index: int, *args: Any, **kwargs: Any) -> None:
+            """No-op in stub; real Ryven triggers exec edges."""
 
     safe_globals: dict[str, Any] = {"Data": Data}
     # Preload common modules/aliases used by generated node logic.
@@ -112,13 +138,18 @@ def _run_logic_once(core_logic: str, node: dict[str, Any], case: dict[str, Any])
 
     # Keep Python default builtins intact to avoid breaking Qt/shiboken internals.
     # Restriction is still enforced upstream by static validation + forbidden checks.
-    safe_locals: dict[str, Any] = {"self": StubNode(), "Data": Data}
+    safe_locals: dict[str, Any] = {"self": StubNode(inputs_by_idx), "Data": Data}
     safe_locals.update(_map_case_inputs(case.get("inputs"), node))
 
     try:
         exec(core_logic, safe_globals, safe_locals)
     except ModuleNotFoundError as exc:
-        return outputs, f"ModuleNotFoundError: {exc}. Check interpreter environment dependencies."
+        msg = str(exc)
+        if "ryven" in msg.lower():
+            msg += (
+                " — do not `import ryven` inside core_logic; `Data` is provided like in generated nodes.py."
+            )
+        return outputs, f"ModuleNotFoundError: {msg} Check interpreter environment dependencies."
     except Exception as exc:
         return outputs, f"{type(exc).__name__}: {exc}"
     return outputs, None

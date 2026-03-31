@@ -36,8 +36,32 @@ def save_nodes_list(project_root: str | Path, nodes_data: list[dict[str, Any]]) 
         json.dump(nodes_data, f, indent=4, ensure_ascii=False)
 
 
-def load_ai_history(project_root: str | Path) -> list[tuple[str, str]]:
-    """Returns list of (role, text) with role in ('user', 'assistant', 'system')."""
+def normalize_ai_turn(entry: tuple[str, ...] | list[Any]) -> tuple[str, str, dict[str, Any]]:
+    """Normalize stored chat entries to (role, content, meta). Meta is {} except user context fields."""
+    if isinstance(entry, (list, tuple)) and len(entry) == 2:
+        role, content = str(entry[0]), str(entry[1])
+        if role in ("user", "assistant", "system"):
+            return role, content, {}
+    if isinstance(entry, (list, tuple)) and len(entry) >= 3:
+        role, content = str(entry[0]), str(entry[1])
+        meta = entry[2] if isinstance(entry[2], dict) else {}
+        if role in ("user", "assistant", "system"):
+            return role, content, dict(meta)
+    return "system", "", {}
+
+
+def ai_history_for_llm(history: list[tuple[str, ...]]) -> list[tuple[str, str]]:
+    """Strip metadata for LangChain message building."""
+    out: list[tuple[str, str]] = []
+    for item in history:
+        role, text, _meta = normalize_ai_turn(item)
+        if role in ("user", "assistant", "system") and text is not None:
+            out.append((role, text))
+    return out
+
+
+def load_ai_history(project_root: str | Path) -> list[tuple[str, str, dict[str, Any]]]:
+    """Returns list of (role, text, meta)."""
     p = ai_chat_path(project_root)
     if not p.is_file():
         return []
@@ -49,21 +73,53 @@ def load_ai_history(project_root: str | Path) -> list[tuple[str, str]]:
         turns = raw
     else:
         return []
-    out: list[tuple[str, str]] = []
+    out: list[tuple[str, str, dict[str, Any]]] = []
     for item in turns:
         if not isinstance(item, dict):
             continue
         role = str(item.get("role", "")).lower()
         content = item.get("content", "")
-        if role in ("user", "assistant", "system") and isinstance(content, str):
-            out.append((role, content))
+        if role not in ("user", "assistant", "system") or not isinstance(content, str):
+            continue
+        meta: dict[str, Any] = {}
+        if role == "user":
+            for key in (
+                "context_node_idx",
+                "context_node_uid",
+                "context_class_name",
+                "context_title",
+                "snapshot_node",
+                "snapshot_node_uid",
+                "snapshot_nodes",
+            ):
+                if key in item:
+                    meta[key] = item[key]
+        out.append((role, content, meta))
     return out
 
 
-def save_ai_history(project_root: str | Path, history: list[tuple[str, str]]) -> None:
+def save_ai_history(project_root: str | Path, history: list[tuple[str, ...]]) -> None:
     p = ai_chat_path(project_root)
     p.parent.mkdir(parents=True, exist_ok=True)
-    turns = [{"role": r, "content": t} for r, t in history if r in ("user", "assistant", "system")]
+    turns: list[dict[str, Any]] = []
+    for item in history:
+        role, text, meta = normalize_ai_turn(item)
+        if role not in ("user", "assistant", "system"):
+            continue
+        row: dict[str, Any] = {"role": role, "content": text}
+        if role == "user" and meta:
+            for key in (
+                "context_node_idx",
+                "context_node_uid",
+                "context_class_name",
+                "context_title",
+                "snapshot_node",
+                "snapshot_node_uid",
+                "snapshot_nodes",
+            ):
+                if key in meta:
+                    row[key] = meta[key]
+        turns.append(row)
     payload = {"version": 1, "turns": turns}
     with open(p, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, ensure_ascii=False)

@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import copy
+import html
 import json
 import sys
-from functools import partial
+import uuid
 from pathlib import Path
 
 from PySide6.QtWidgets import (
@@ -32,7 +33,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 from PySide6.QtCore import Qt, QSettings, QTimer
-from PySide6.QtGui import QFont, QTextCursor
+from PySide6.QtGui import QFont, QTextCharFormat, QTextCursor
 
 from ryven_node_generator.codegen import generator
 from ryven_node_generator.preview.node_preview import NodePreviewWidget
@@ -65,12 +66,16 @@ class GeneratorDesignerUI(QMainWindow):
         self._ai_tab_widget = None
         self._ai_streaming_this_turn = False
         self._ai_turn_in_progress = False
+        self._ai_pin_chat_to_bottom = True
         self._ai_preview_active = False
         self._ai_pending_snapshot_nodes: list | None = None
         self._ai_pending_proposed_nodes: list | None = None
         self._ai_pending_changed_keys: set[str] = set()
         self._ai_highlighted_widgets: set = set()
         self._ai_style_backup: dict[int, str] = {}
+
+        # When AI diff preview is enabled, store scroll anchors per tab.
+        self._code_diff_anchors: dict[str, str] = {}
 
         self._project_root: str | None = None
         self._dirty = False
@@ -257,6 +262,7 @@ class GeneratorDesignerUI(QMainWindow):
             self.statusBar().showMessage("Empty project — add a node or import JSON.", 4000)
 
     def _restore_nodes_ui_from_data(self):
+        self._ensure_node_uids(self.nodes_data)
         self.node_list_ui.clear()
         for node in self.nodes_data:
             self.node_list_ui.addItem(self._node_list_text(node))
@@ -272,6 +278,19 @@ class GeneratorDesignerUI(QMainWindow):
     def _restore_ai_transcript_ui(self):
         self._rebuild_ai_chat_ui()
 
+    def _ensure_node_uids(self, nodes: list[dict]) -> bool:
+        """Ensure every node has a stable, unique ID."""
+        changed = False
+        seen: set[str] = set()
+        for node in nodes:
+            uid = str(node.get("node_uid", "")).strip()
+            if not uid or uid in seen:
+                node["node_uid"] = uuid.uuid4().hex
+                uid = node["node_uid"]
+                changed = True
+            seen.add(uid)
+        return changed
+
     def _ai_chat_interaction_locked(self) -> bool:
         if getattr(self, "_ai_turn_in_progress", False):
             return True
@@ -282,6 +301,17 @@ class GeneratorDesignerUI(QMainWindow):
             return
         sb = self.ai_chat_scroll.verticalScrollBar()
         sb.setValue(sb.maximum())
+
+    def _ai_force_chat_to_bottom(self):
+        """Keep chat pinned to bottom across layout reflow."""
+        self._ai_scroll_chat_to_bottom()
+        QTimer.singleShot(0, self._ai_scroll_chat_to_bottom)
+        QTimer.singleShot(30, self._ai_scroll_chat_to_bottom)
+
+    def _ai_on_chat_range_changed(self, _min: int, _max: int):
+        """When chat content grows/reflows, keep viewport at bottom."""
+        if self._ai_pin_chat_to_bottom:
+            self._ai_scroll_chat_to_bottom()
 
     def _rebuild_ai_chat_ui(self):
         if not getattr(self, "ai_chat_messages_layout", None):
@@ -301,15 +331,19 @@ class GeneratorDesignerUI(QMainWindow):
         i = 0
         n = len(h)
         while i < n:
-            role, text = h[i]
+            role, text, meta = project_ws.normalize_ai_turn(h[i])
             if role == "user":
-                lay.addWidget(self._ai_make_user_message_row(text, i))
+                lay.addWidget(self._ai_make_user_message_row(text, i, meta))
                 i += 1
-                if i < n and h[i][0] == "assistant":
-                    lay.addWidget(self._ai_make_assistant_bubble(h[i][1]))
-                    i += 1
-                elif i < n and h[i][0] == "system":
-                    lay.addWidget(self._ai_make_system_bubble(h[i][1]))
+                # One user turn may include multiple system progress lines and an assistant reply.
+                while i < n:
+                    r2, t2, _m = project_ws.normalize_ai_turn(h[i])
+                    if r2 == "user":
+                        break
+                    if r2 == "system":
+                        lay.addWidget(self._ai_make_system_bubble(t2))
+                    elif r2 == "assistant":
+                        lay.addWidget(self._ai_make_assistant_bubble(t2))
                     i += 1
             elif role == "assistant":
                 lay.addWidget(self._ai_make_assistant_bubble(text))
@@ -334,9 +368,9 @@ class GeneratorDesignerUI(QMainWindow):
             self._ai_streaming_block.setParent(None)
 
         lay.addStretch(1)
-        QTimer.singleShot(0, self._ai_scroll_chat_to_bottom)
+        self._ai_force_chat_to_bottom()
 
-    def _ai_make_user_message_row(self, text: str, user_index: int) -> QWidget:
+    def _ai_make_user_message_row(self, text: str, user_index: int, ctx: dict | None = None) -> QWidget:
         row = QWidget()
         rlay = QHBoxLayout(row)
         rlay.setContentsMargins(0, 0, 0, 0)
@@ -350,14 +384,42 @@ class GeneratorDesignerUI(QMainWindow):
             "Withdraw this question and the following reply. "
             "If it was the latest turn, also drops a pending AI preview (same as Undo)."
         )
-        btn.setEnabled(not self._ai_chat_interaction_locked())
-        btn.clicked.connect(partial(self._ai_withdraw_turn, user_index))
+        # Always clickable; handler shows a message if AI is still running (avoids stuck-disabled after thread teardown races).
+        btn.setEnabled(True)
+        # QToolButton.clicked emits (bool); do not use partial(..., idx) or the bool becomes user_index.
+        btn.clicked.connect(lambda _checked=False, idx=user_index: self._ai_withdraw_turn(idx))
 
         bubble = QFrame()
         bubble.setObjectName("AiUserBubble")
         blay = QVBoxLayout(bubble)
         blay.setContentsMargins(12, 10, 12, 10)
         blay.setSpacing(4)
+        ctx = ctx or {}
+        title = (ctx.get("context_title") or "").strip()
+        cname = (ctx.get("context_class_name") or "").strip()
+        cuid = str(ctx.get("context_node_uid", "")).strip()
+        if title or cname:
+            display = html.escape(title or cname)
+            sub_raw = cname if title and cname and title != cname else ""
+            sub = html.escape(sub_raw) if sub_raw else ""
+            ctx_lbl = QLabel()
+            ctx_lbl.setObjectName("AiUserContextLine")
+            if sub:
+                ctx_lbl.setText(
+                    f'Context node: <a href="#">{display}</a> <span style="color:#7d8c9c;">({sub})</span>'
+                )
+            else:
+                ctx_lbl.setText(f'Context node: <a href="#">{display}</a>')
+            ctx_lbl.setTextFormat(Qt.RichText)
+            ctx_lbl.setTextInteractionFlags(Qt.TextBrowserInteraction)
+            ctx_lbl.setOpenExternalLinks(False)
+            nidx = int(ctx.get("context_node_idx", -1))
+            cname_f = cname or None
+            uid_f = cuid or None
+            ctx_lbl.linkActivated.connect(
+                lambda _u, i=nidx, cn=cname_f, uid=uid_f: self._ai_goto_history_context_node(i, cn, uid)
+            )
+            blay.addWidget(ctx_lbl)
         meta = QLabel("You")
         meta.setObjectName("AiChatMeta")
         body = QLabel(text)
@@ -370,6 +432,116 @@ class GeneratorDesignerUI(QMainWindow):
         rlay.addWidget(bubble, 1)
         rlay.addWidget(btn, 0, Qt.AlignTop)
         return row
+
+    def _ai_goto_history_context_node(self, node_idx: int, class_name: str | None, node_uid: str | None):
+        """Switch node list / editor to the node referenced by a stored chat context."""
+        target = -1
+        if node_uid:
+            for i, node in enumerate(self.nodes_data):
+                if str(node.get("node_uid", "")).strip() == node_uid:
+                    target = i
+                    break
+        if target < 0 and class_name:
+            for i, node in enumerate(self.nodes_data):
+                if str(node.get("class_name", "")) == class_name:
+                    target = i
+                    break
+        if target < 0 and 0 <= node_idx < len(self.nodes_data):
+            target = node_idx
+        if target < 0:
+            QMessageBox.information(
+                self,
+                "Node not found",
+                "That context node is no longer in this project (renamed or deleted).",
+            )
+            return
+        self.node_list_ui.setCurrentRow(target)
+
+    def _restore_nodes_from_history_snapshot(self, snapshot_nodes: list, preferred_idx: int = -1) -> bool:
+        """Restore full node list from a user-turn snapshot."""
+        if not isinstance(snapshot_nodes, list):
+            return False
+        self._ai_reset_preview_state()
+        self.nodes_data = copy.deepcopy(snapshot_nodes)
+        self._ensure_node_uids(self.nodes_data)
+
+        self.node_list_ui.blockSignals(True)
+        self.node_list_ui.clear()
+        for node in self.nodes_data:
+            self.node_list_ui.addItem(self._node_list_text(node))
+        self.node_list_ui.blockSignals(False)
+
+        if self.nodes_data:
+            if not (0 <= preferred_idx < len(self.nodes_data)):
+                preferred_idx = self.current_idx if 0 <= self.current_idx < len(self.nodes_data) else 0
+            self.current_idx = -1
+            self.node_list_ui.setCurrentRow(preferred_idx)
+        else:
+            self.current_idx = -1
+            self._clear_editor()
+
+        self._refresh_counts()
+        self.update_live_preview()
+        return True
+
+    def _restore_node_from_history_snapshot(
+        self,
+        snapshot_node: dict,
+        context_node_uid: str | None,
+        preferred_idx: int = -1,
+    ) -> tuple[bool, int]:
+        """Restore only ONE node from a user-turn snapshot.
+
+        This must not rebuild node list order; it only replaces the target node dict
+        in `self.nodes_data`, updates the node list text for that index, and reloads
+        the editor/code previews if the restored node is currently selected.
+        """
+        if not isinstance(snapshot_node, dict):
+            return False, -1
+
+        # Ensure the snapshot node has a uid to match current nodes robustly.
+        snap_uid = str(snapshot_node.get("node_uid", "")).strip()
+        if context_node_uid and not snap_uid:
+            snapshot_node = copy.deepcopy(snapshot_node)
+            snapshot_node["node_uid"] = context_node_uid
+            snap_uid = context_node_uid
+
+        target_idx = -1
+        if snap_uid:
+            for i, node in enumerate(self.nodes_data):
+                if str(node.get("node_uid", "")).strip() == snap_uid:
+                    target_idx = i
+                    break
+        if target_idx < 0 and 0 <= preferred_idx < len(self.nodes_data):
+            target_idx = preferred_idx
+
+        if target_idx < 0 or target_idx >= len(self.nodes_data):
+            return False, -1
+
+        # Replace the node dict in-place; do not touch list order.
+        self.nodes_data[target_idx] = copy.deepcopy(snapshot_node)
+        self._ensure_node_uids(self.nodes_data)
+
+        # Update the list item display text for this index (keeps order).
+        try:
+            item = self.node_list_ui.item(target_idx)
+            if item:
+                item.setText(self._node_list_text(self.nodes_data[target_idx]))
+        except Exception:
+            pass
+
+        restored_current = target_idx == self.current_idx
+        if restored_current:
+            self.load_node_to_ui(self.nodes_data[target_idx])
+        else:
+            # Code previews depend on whole project; refresh them.
+            self.update_live_preview()
+
+        # Withdraw is an undo-like operation; clear stale AI diff so previews remain consistent.
+        if self._ai_preview_active:
+            self._ai_reset_preview_state()
+
+        return True, target_idx
 
     def _ai_make_assistant_bubble(self, text: str) -> QWidget:
         wrap = QFrame()
@@ -406,28 +578,98 @@ class GeneratorDesignerUI(QMainWindow):
 
     def _ai_withdraw_turn(self, user_idx: int):
         if self._ai_chat_interaction_locked():
+            QMessageBox.information(
+                self,
+                "Withdraw",
+                "Wait until the current AI run finishes, then you can withdraw a turn.",
+            )
             return
         h = self._ai_history
-        if user_idx < 0 or user_idx >= len(h) or h[user_idx][0] != "user":
+        if user_idx < 0 or user_idx >= len(h):
+            return
+        role, _text, _meta = project_ws.normalize_ai_turn(h[user_idx])
+        if role != "user":
+            return
+        _yes = QMessageBox.StandardButton.Yes
+        _no = QMessageBox.StandardButton.No
+        if (
+            QMessageBox.question(
+                self,
+                "Withdraw message",
+                "Remove this question and the entire AI reply for this turn?",
+                _yes | _no,
+                _no,
+            )
+            != _yes
+        ):
             return
         n = len(h)
         last_u = None
         for j in range(n - 1, -1, -1):
-            if h[j][0] == "user":
+            if project_ws.normalize_ai_turn(h[j])[0] == "user":
                 last_u = j
                 break
         is_latest = last_u is not None and user_idx == last_u
+        restored_from_snapshot = False
+        restored_idx = -1
+        _, _, meta = project_ws.normalize_ai_turn(h[user_idx])
+        context_uid = str(meta.get("context_node_uid", "")).strip() or None
+        snapshot_node = meta.get("snapshot_node")
+        snapshot_nodes = meta.get("snapshot_nodes")  # backward compatibility
+        preferred_idx = -1
+        try:
+            preferred_idx = int(meta.get("context_node_idx", -1))
+        except Exception:
+            preferred_idx = -1
+
+        if isinstance(snapshot_node, dict):
+            restored_from_snapshot, restored_idx = self._restore_node_from_history_snapshot(
+                snapshot_node, context_uid, preferred_idx
+            )
+        elif isinstance(snapshot_nodes, list):
+            # Try to locate the same node by uid first.
+            if context_uid:
+                candidate = None
+                for nd in snapshot_nodes:
+                    if str((nd or {}).get("node_uid", "")).strip() == context_uid:
+                        candidate = nd
+                        break
+                if isinstance(candidate, dict):
+                    restored_from_snapshot, restored_idx = self._restore_node_from_history_snapshot(
+                        candidate, context_uid, preferred_idx
+                    )
+            # Fallback to index from the saved meta.
+            if not restored_from_snapshot and 0 <= preferred_idx < len(snapshot_nodes):
+                candidate = snapshot_nodes[preferred_idx]
+                if isinstance(candidate, dict):
+                    restored_from_snapshot, restored_idx = self._restore_node_from_history_snapshot(
+                        candidate, context_uid, preferred_idx
+                    )
+        # Remove this user message and every following assistant/system message until the next user (full turn).
         rm_end = user_idx + 1
-        if rm_end < n and h[rm_end][0] in ("assistant", "system"):
+        while rm_end < n and project_ws.normalize_ai_turn(h[rm_end])[0] != "user":
             rm_end += 1
-        if is_latest and self._ai_preview_active:
-            self._ai_undo_proposal()
-        elif is_latest:
-            self._ai_last_result = None
+        if is_latest:
+            if restored_from_snapshot:
+                # Clear AI preview only if it was for the same currently selected node.
+                if self._ai_preview_active and restored_idx == self.current_idx:
+                    self._ai_reset_preview_state()
+                self._ai_last_result = None
+            else:
+                # If we couldn't restore from snapshot, fallback to legacy undo.
+                if self._ai_preview_active:
+                    self._ai_undo_proposal()
+                else:
+                    self._ai_last_result = None
         self._ai_history[:] = h[:user_idx] + h[rm_end:]
         self._rebuild_ai_chat_ui()
         self._schedule_autosave()
-        self.statusBar().showMessage("Conversation turn withdrawn.", 2500)
+        if restored_from_snapshot:
+            self.statusBar().showMessage(
+                "Conversation turn withdrawn and context node restored from snapshot.", 3000
+            )
+        else:
+            self.statusBar().showMessage("Conversation turn withdrawn.", 2500)
 
     def _schedule_autosave(self):
         if not self._project_root:
@@ -575,6 +817,9 @@ class GeneratorDesignerUI(QMainWindow):
         self.preview_tabs.addTab(self.json_preview, "nodes_config.json")
         self.preview_tabs.addTab(self.node_preview, "Preview")
 
+        # Keep code preview tabs pinned to the earliest change when AI diff is rendered.
+        self.preview_tabs.currentChanged.connect(self._on_preview_tab_changed)
+
         ai_tab = QWidget()
         self._ai_tab_widget = ai_tab
         ai_lay = QVBoxLayout(ai_tab)
@@ -600,6 +845,7 @@ class GeneratorDesignerUI(QMainWindow):
         self.ai_chat_messages_layout.setContentsMargins(8, 8, 8, 8)
         self.ai_chat_messages_layout.setSpacing(10)
         self.ai_chat_scroll.setWidget(self.ai_chat_inner)
+        self.ai_chat_scroll.verticalScrollBar().rangeChanged.connect(self._ai_on_chat_range_changed)
 
         self._ai_streaming_block = QWidget()
         _sbl = QVBoxLayout(self._ai_streaming_block)
@@ -670,6 +916,47 @@ class GeneratorDesignerUI(QMainWindow):
         commit_row.addWidget(self._ai_commit_hint, 1)
         lay.addLayout(commit_row)
         return panel
+
+    def _on_preview_tab_changed(self, _index: int):
+        w = self.preview_tabs.currentWidget()
+        if w is self.nodes_preview:
+            anchor = self._code_diff_anchors.get("nodes", "")
+            self._scroll_preview_textedit_to_anchor(self.nodes_preview, anchor)
+        elif w is self.gui_preview:
+            anchor = self._code_diff_anchors.get("gui", "")
+            self._scroll_preview_textedit_to_anchor(self.gui_preview, anchor)
+        elif w is self.json_preview:
+            anchor = self._code_diff_anchors.get("json", "")
+            self._scroll_preview_textedit_to_anchor(self.json_preview, anchor)
+
+    def _scroll_preview_textedit_to_anchor(self, te: QTextEdit, anchor: str):
+        """Scroll QTextEdit so the first-change anchor is near the top (best-effort).
+
+        If the document is shorter than the viewport, the scroll range may be 0 and this becomes a no-op.
+        """
+        if not anchor:
+            return
+        try:
+            if not te.find(anchor):
+                return
+
+            cursor = te.textCursor()
+            rect = te.cursorRect(cursor)
+            sb = te.verticalScrollBar()
+            if sb.maximum() <= 0:
+                return
+
+            # rect.top() is in viewport coordinates: shift scrollbar so the cursor is near the top.
+            top_padding = 6
+            target = sb.value() + rect.top() - top_padding
+            if target < sb.minimum():
+                target = sb.minimum()
+            if target > sb.maximum():
+                target = sb.maximum()
+            sb.setValue(int(target))
+        except Exception:
+            # Fallback: do nothing (avoid breaking preview).
+            return
 
     def _build_core_group(self):
         g = QGroupBox("Core Properties")
@@ -824,6 +1111,7 @@ class GeneratorDesignerUI(QMainWindow):
 
         node = self.nodes_data[self.current_idx]
         node.update({
+            "node_uid": str(node.get("node_uid", "")).strip() or uuid.uuid4().hex,
             "class_name": self.name_edit.text(),
             "title": self.title_edit.text(),
             "description": self.desc_edit.text(),
@@ -866,6 +1154,8 @@ class GeneratorDesignerUI(QMainWindow):
         self.save_current_state()
         self.current_idx = row
         if 0 <= row < len(self.nodes_data):
+            if not str(self.nodes_data[row].get("node_uid", "")).strip():
+                self.nodes_data[row]["node_uid"] = uuid.uuid4().hex
             self.load_node_to_ui(self.nodes_data[row])
 
     def load_node_to_ui(self, node):
@@ -909,6 +1199,7 @@ class GeneratorDesignerUI(QMainWindow):
         self.save_current_state()
         name = self._next_node_name()
         new_node = {
+            "node_uid": uuid.uuid4().hex,
             "class_name": name,
             "title": name,
             "color": "#ffffff",
@@ -1049,26 +1340,29 @@ class GeneratorDesignerUI(QMainWindow):
             and self._ai_pending_snapshot_nodes is not None
             and self._ai_pending_proposed_nodes is not None
         ):
-            from ryven_node_generator.ai_assistant.preview_diff import json_list_diff_html
+            from ryven_node_generator.ai_assistant.preview_diff import json_list_diff_html_and_first_change
 
             try:
-                html_doc = json_list_diff_html(
+                html_doc, first = json_list_diff_html_and_first_change(
                     self._ai_pending_snapshot_nodes,
                     self._ai_pending_proposed_nodes,
                 )
                 self.json_preview.setHtml(html_doc)
+                self._code_diff_anchors["json"] = first
             except Exception as e:
-                self.json_preview.setPlainText(f"(JSON diff error: {e})")
+                self._set_preview_plain_text(self.json_preview, f"(JSON diff error: {e})")
             return
         if not self.nodes_data:
             self.json_preview.clear()
             return
         try:
-            self.json_preview.setPlainText(
-                json.dumps(self.nodes_data, indent=4, ensure_ascii=False)
+            self._set_preview_plain_text(
+                self.json_preview,
+                json.dumps(self.nodes_data, indent=4, ensure_ascii=False),
             )
+            self._code_diff_anchors.pop("json", None)
         except Exception as e:
-            self.json_preview.setPlainText(f"(JSON preview error: {e})")
+            self._set_preview_plain_text(self.json_preview, f"(JSON preview error: {e})")
 
     def _update_ai_context_label(self):
         if self.current_idx < 0 or self.current_idx >= len(self.nodes_data):
@@ -1097,14 +1391,86 @@ class GeneratorDesignerUI(QMainWindow):
             return
         try:
             n_code, g_code = generator.generate_code_from_data(self.nodes_data)
-            self.nodes_preview.setPlainText(n_code)
-            self.gui_preview.setPlainText(g_code)
+
+            if (
+                self._ai_preview_active
+                and self._ai_pending_snapshot_nodes is not None
+                and self._ai_pending_proposed_nodes is not None
+            ):
+                from ryven_node_generator.ai_assistant.preview_diff import (
+                    text_diff_html_and_first_change,
+                )
+
+                snap_n, snap_g = generator.generate_code_from_data(self._ai_pending_snapshot_nodes)
+                prop_n, prop_g = generator.generate_code_from_data(self._ai_pending_proposed_nodes)
+
+                nodes_html, nodes_first = text_diff_html_and_first_change(snap_n, prop_n)
+                gui_html, gui_first = text_diff_html_and_first_change(snap_g, prop_g)
+
+                self.nodes_preview.setHtml(nodes_html)
+                self.gui_preview.setHtml(gui_html)
+                self._code_diff_anchors["nodes"] = nodes_first
+                self._code_diff_anchors["gui"] = gui_first
+            else:
+                self._set_preview_plain_text(self.nodes_preview, n_code)
+                self._set_preview_plain_text(self.gui_preview, g_code)
+                self._code_diff_anchors.pop("nodes", None)
+                self._code_diff_anchors.pop("gui", None)
         except Exception as e:
             self.statusBar().showMessage(f"Code preview error: {e}", 4000)
             return
 
         if 0 <= self.current_idx < len(self.nodes_data):
             self.node_preview.update_preview(self.nodes_data[self.current_idx])
+
+    def _force_plain_previews(self):
+        """Force-reset all code/json preview QTextEdits to plain text.
+
+        This prevents any leftover diff HTML spans from persisting after Keep/Undo.
+        """
+        # Clear anchors and render plain text regardless of current diff flags.
+        self._code_diff_anchors.pop("nodes", None)
+        self._code_diff_anchors.pop("gui", None)
+        self._code_diff_anchors.pop("json", None)
+
+        self._update_ai_context_label()
+
+        if not self.nodes_data:
+            self.nodes_preview.clear()
+            self.gui_preview.clear()
+            self.json_preview.clear()
+            return
+
+        try:
+            # JSON plain
+            self._set_preview_plain_text(
+                self.json_preview,
+                json.dumps(self.nodes_data, indent=4, ensure_ascii=False),
+            )
+            # Code plain
+            n_code, g_code = generator.generate_code_from_data(self.nodes_data)
+            self._set_preview_plain_text(self.nodes_preview, n_code)
+            self._set_preview_plain_text(self.gui_preview, g_code)
+        except Exception as e:
+            self.statusBar().showMessage(f"Preview render error: {e}", 4000)
+            return
+
+        if 0 <= self.current_idx < len(self.nodes_data):
+            self.node_preview.update_preview(self.nodes_data[self.current_idx])
+
+    def _set_preview_plain_text(self, te: QTextEdit, text: str):
+        """Reset text format state before writing plain preview content.
+
+        QTextEdit may keep cursor char format from previous HTML spans (diff colors).
+        If we directly call setPlainText after setHtml, the whole document can inherit
+        stale foreground color (e.g. all red/green). This hard-resets the format first.
+        """
+        te.clear()
+        te.setCurrentCharFormat(QTextCharFormat())
+        te.setPlainText(text)
+        c = te.textCursor()
+        c.movePosition(QTextCursor.Start)
+        te.setTextCursor(c)
 
     def pick_color(self):
         if self.current_idx < 0 or self.current_idx >= len(self.nodes_data):
@@ -1214,7 +1580,17 @@ class GeneratorDesignerUI(QMainWindow):
         if not text:
             return
         self.ai_input.clear()
-        self._ai_history.append(("user", text))
+        ctx = {
+            "context_node_idx": self.current_idx,
+            "context_node_uid": str(self.nodes_data[self.current_idx].get("node_uid", "")),
+            "context_class_name": str(self.nodes_data[self.current_idx].get("class_name", "")),
+            "context_title": str(self.nodes_data[self.current_idx].get("title", "")),
+            # Store only the current node snapshot (do NOT snapshot the whole project),
+            # so withdrawing this turn affects only that context node's JSON.
+            "snapshot_node": copy.deepcopy(self.nodes_data[self.current_idx]),
+            "snapshot_node_uid": str(self.nodes_data[self.current_idx].get("node_uid", "")),
+        }
+        self._ai_history.append(("user", text, ctx))
         self._ai_turn_in_progress = True
         if self._ai_tab_widget is not None:
             self.preview_tabs.setCurrentWidget(self._ai_tab_widget)
@@ -1228,7 +1604,7 @@ class GeneratorDesignerUI(QMainWindow):
         node = copy.deepcopy(self.nodes_data[self.current_idx])
         names = [n.get("class_name", "") for n in self.nodes_data]
         self._ai_set_busy(True)
-        hist_for_api = list(self._ai_history[:-1])
+        hist_for_api = project_ws.ai_history_for_llm(list(self._ai_history[:-1]))
         self._ai_worker = _AITurnWorker(text, hist_for_api, node, names, self)
         self._ai_worker.stream_delta.connect(self._ai_on_stream_delta)
         self._ai_worker.progress_event.connect(self._ai_on_worker_progress)
@@ -1240,13 +1616,16 @@ class GeneratorDesignerUI(QMainWindow):
 
     def _ai_worker_cleanup(self):
         self._ai_worker = None
+        # Rebuild so withdraw buttons match post-thread state (avoids disabled buttons if rebuild ran mid-teardown).
+        self._rebuild_ai_chat_ui()
+        self._ai_refresh_commit_buttons()
 
     def _ai_on_worker_progress(self, event: dict):
         et = str((event or {}).get("type", ""))
         if et == "round_start":
             rnd = int(event.get("round", 1))
             mx = int(event.get("max_rounds", rnd))
-            self._ai_history.append(("system", f"Round {rnd}/{mx}: generating and validating core_logic"))
+            self._ai_history.append(("system", f"Round {rnd}/{mx}: generating and validating core_logic", {}))
         elif et == "round_result":
             rnd = int(event.get("round", 1))
             status = str(event.get("status", "failed"))
@@ -1255,7 +1634,7 @@ class GeneratorDesignerUI(QMainWindow):
             msg = f"Round {rnd} {icon} {status}"
             if reason:
                 msg += f"\n- {reason}"
-            self._ai_history.append(("system", msg))
+            self._ai_history.append(("system", msg, {}))
         elif et == "test_result":
             rnd = int(event.get("round", 1))
             passed = int(event.get("passed", 0))
@@ -1266,12 +1645,12 @@ class GeneratorDesignerUI(QMainWindow):
             msg = f"Round {rnd} tests {icon} {passed}/{total} passed"
             if details:
                 msg += "\n- " + "\n- ".join(details[:2])
-            self._ai_history.append(("system", msg))
+            self._ai_history.append(("system", msg, {}))
         elif et == "test_cases":
             rnd = int(event.get("round", 1))
             summary = [str(x) for x in (event.get("summary") or []) if str(x).strip()]
             msg = f"Round {rnd} cases: {', '.join(summary[:3])}" if summary else f"Round {rnd} cases: default smoke"
-            self._ai_history.append(("system", msg))
+            self._ai_history.append(("system", msg, {}))
         else:
             return
         self._rebuild_ai_chat_ui()
@@ -1289,7 +1668,7 @@ class GeneratorDesignerUI(QMainWindow):
             elif not result.get("_stream_had_visible_reply") and msg.strip():
                 self._ai_on_stream_delta(msg + "\n")
             self._ai_on_stream_delta("\n")
-        self._ai_history.append(("assistant", msg))
+        self._ai_history.append(("assistant", msg, {}))
         trace = result.get("repair_trace") or []
         if trace:
             final_round = int(result.get("repair_round", len(trace)))
@@ -1298,6 +1677,7 @@ class GeneratorDesignerUI(QMainWindow):
                 (
                     "system",
                     f"Self-repair finished: {len(trace)} rounds, using round {final_round}; passed rounds {passed_rounds}/{len(trace)}.",
+                    {},
                 )
             )
         self._ai_last_result = result
@@ -1309,7 +1689,7 @@ class GeneratorDesignerUI(QMainWindow):
 
     def _ai_on_worker_failed(self, err: str):
         self._ai_turn_in_progress = False
-        self._ai_history.append(("system", f"Request failed: {err}"))
+        self._ai_history.append(("system", f"Request failed: {err}", {}))
         self._ai_set_busy(False)
         self._rebuild_ai_chat_ui()
         self._schedule_autosave()
@@ -1317,7 +1697,7 @@ class GeneratorDesignerUI(QMainWindow):
 
     def _ai_on_worker_stopped(self):
         self._ai_turn_in_progress = False
-        self._ai_history.append(("system", "Generation stopped by user."))
+        self._ai_history.append(("system", "Generation stopped by user.", {}))
         self._ai_set_busy(False)
         self._rebuild_ai_chat_ui()
         self._schedule_autosave()
@@ -1472,7 +1852,8 @@ class GeneratorDesignerUI(QMainWindow):
         self._ai_pending_proposed_nodes = None
         self._ai_pending_changed_keys = set()
         self._ai_last_result = None
-        self.save_current_state()
+        # Force plain previews after Keep so diff HTML spans cannot linger.
+        self._force_plain_previews()
         self._ai_refresh_commit_buttons()
         self.statusBar().showMessage("AI change kept.", 2500)
         self._schedule_autosave()
@@ -1500,7 +1881,8 @@ class GeneratorDesignerUI(QMainWindow):
             self.current_idx = -1
             self._clear_editor()
         self._ai_refresh_commit_buttons()
-        self.update_live_preview()
+        # Force plain previews after Undo so diff HTML spans cannot linger.
+        self._force_plain_previews()
         self.statusBar().showMessage("AI suggestion discarded.", 2000)
 
     def final_generate(self):

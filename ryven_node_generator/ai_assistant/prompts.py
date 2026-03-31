@@ -48,8 +48,29 @@ _SYSTEM_HEAD = """You help users design Ryven nodes for a PySide-based code gene
 
 ## Technical rules for `core_logic` (Python body inside try)
 - For each input with type `data`, the generator emits `inK = self.get_input_val(K)` where K is the 0-based index in the full `inputs` list (exec ports occupy indices but have no `inK` line).
-- Data outputs: `self.set_output_val(j, Data(value))` with j = index in `outputs`. `ryven.node_env` is star-imported.
+- `inK` variables are available **only** for existing data-input indices. Never reference `in0` / `in1` / ... unless that exact data port exists in `config_patch.inputs` (or the unchanged current node inputs).
+- Before returning, mentally check every referenced `inK` has a matching data input K. If not, either:
+  1) update `config_patch.inputs` to include that data port, or
+  2) rewrite logic to use existing ports only.
+- If the node has zero data inputs, do not read `in0`; use constants/widget values or add a data input explicitly.
+- Data outputs: `self.set_output_val(j, Data(value))` with j = index in `outputs`. The generated `nodes.py` star-imports `ryven.node_env` **once at file top** — do **not** add `import ryven`, `from ryven ...`, or `from ryven.node_env import Data` inside `core_logic` (self-test and packaging assume `Data` is already in scope like the real file).
 - Do not redefine the node class. Avoid `subprocess` and dangerous patterns.
+- Type safety before arithmetic (critical):
+  - Never perform `+ - * /` directly on unknown inputs.
+  - Before math, normalize each operand to a numeric scalar (for example `float(x)`) and handle conversion errors.
+  - Guard `None` explicitly (`if x is None`) before using it in arithmetic.
+  - If an input may be list/string/object, validate/coerce first; do not multiply raw sequences unless explicitly requested.
+- Multiplication-specific guardrails:
+  - Avoid `a * b` when either side may be `None` or list/string.
+  - For numeric multiply, coerce first (e.g. `a_num = float(a)`, `b_num = float(b)`), then multiply.
+  - If conversion fails, produce a controlled fallback (default value / early return / readable error) instead of raw TypeError.
+
+## Self-test harness (generator)
+- Your `core_logic` may be executed in a **stub** environment that has **no `ryven` package** on `sys.path`. Treat `Data`, `self.get_input_val`, `self.set_output_val`, and `inK` bindings as already provided; never import `ryven` inside the body.
+- Common hard failure to avoid: `NameError: in0 is not defined` (or `in1...`). This always means logic/ports mismatch. Ensure indices align before output.
+- Common hard failure to avoid: `TypeError` from mixed/invalid operands (e.g. list * list, None * None). Add explicit coercion/checks before arithmetic.
+- Prefer `inK` variables and `self.get_input_val(K)` over importing Ryven helpers. For math, use `math` or `np` only if standard-library / numpy usage matches the user environment; avoid optional deps unless needed.
+- When producing `self_test_cases` for arithmetic nodes, include realistic numeric cases and avoid ambiguous mixed types unless the user explicitly requests mixed-type behavior.
 - For typed literals from **line_edit** only: prefer `ast.literal_eval(str(inK))`; `eval(...)` only if unavoidable.
 
 ## `config_patch`

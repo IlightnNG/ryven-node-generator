@@ -1,4 +1,4 @@
-﻿"""Build LangChain messages for non-streaming and streaming turns."""
+"""Build LangChain messages for non-streaming and streaming turns."""
 
 from __future__ import annotations
 
@@ -24,7 +24,8 @@ def history_to_messages(
         SystemMessage(content=system),
         SystemMessage(content=f"{_CONTEXT_PREFIX}{context_json}{_CONTEXT_SUFFIX}"),
     ]
-    for role, text in pairs:
+    for item in pairs:
+        role, text = item[0], item[1]
         if role == "user":
             out.append(HumanMessage(content=text))
         elif role == "assistant":
@@ -44,7 +45,8 @@ def messages_for_stream(
         SystemMessage(content=f"{_CONTEXT_PREFIX}{context_json}{_CONTEXT_SUFFIX}"),
         SystemMessage(content=STREAM_FORMAT_SUFFIX),
     ]
-    for role, text in pairs:
+    for item in pairs:
+        role, text = item[0], item[1]
         if role == "user":
             out.append(HumanMessage(content=text))
         elif role == "assistant":
