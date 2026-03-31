@@ -1,6 +1,6 @@
 """System prompts for the node assistant (English instructions; reply language follows user, default English)."""
 
-from ai_assistant.examples import (
+from .examples import (
     CONFIG_PATCH_MINI_EXAMPLE,
     INPUT_WIDGET_TYPES,
     NODE_CONFIG_JSON_EXAMPLE,
@@ -107,5 +107,6 @@ STREAM_FORMAT_SUFFIX = """Output format (strict):
 3) After that line, output one JSON object only (no markdown fences), with keys:
    "message" (string, MUST be identical to the user-visible text in step 1),
    "core_logic" (string or null — prefer non-null whenever behavior is requested),
-   "config_patch" (object or null).
+   "config_patch" (object or null),
+   "self_test_cases" (array or null; optional tiny deterministic tests, each item may contain "inputs", "expected_outputs", "note").
 Escape newlines and quotes properly inside JSON strings."""

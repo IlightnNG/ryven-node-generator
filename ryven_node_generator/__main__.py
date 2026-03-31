@@ -1,4 +1,4 @@
-"""Backward-compatible launcher: `python ui.py` from the repository root."""
+"""`python -m ryven_node_generator` entry point."""
 
 from ryven_node_generator.ui.main_window import run_app
 

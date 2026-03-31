@@ -5,9 +5,9 @@ A desktop tool for designing and generating **Ryven-compatible node packages**. 
 ## Features
 
 - **Visual node studio** — PySide6 UI to edit node metadata: titles, descriptions, input/output ports (`exec` / `data`), optional input widgets, main widgets (button, displays, or custom), and node color.
-- **Code generation** — Jinja2 templates in `generator.py` render Ryven-style `nodes.py` and `gui.py`; `widget_template.py` is copied into the output folder.
-- **Flow-style preview** — `node_preview.py` draws a lightweight preview of the node (ports and widgets) before you export.
-- **Project workspace** — Save/load a project directory with `nodes_config.json` (node definitions) and optional `generator_ai_chat.json` (AI chat history).
+- **Code generation** — Jinja2 templates under `ryven_node_generator/codegen/` render Ryven-style `nodes.py` and `gui.py`; `assets/widget_template.py` is copied into the output folder.
+- **Flow-style preview** — `ryven_node_generator/preview/` draws a lightweight preview of the node (ports and widgets) before you export.
+- **Project workspace** — Save/load a project directory with `nodes_config.json` (node definitions) and optional `generator_ai_chat.json` (AI chat history; see `ryven_node_generator/project/`).
 - **Optional AI assistant** — With API keys configured, LangChain + an OpenAI-compatible chat model can suggest `core_logic` and partial config updates from natural language (see `.env.example`).
 
 ## Requirements
@@ -37,6 +37,8 @@ Start the application:
 
 ```bash
 python ui.py
+# or
+python -m ryven_node_generator
 ```
 
 1. Design or import your nodes in the UI.
@@ -47,12 +49,14 @@ python ui.py
 
 | Path | Role |
 |------|------|
-| `ui.py` | Main window (`NodeStudio`); entry point |
-| `generator.py` | Templates and file generation |
-| `node_preview.py` | On-canvas-style node preview |
-| `project_workspace.py` | `nodes_config.json` / `generator_ai_chat.json` I/O |
-| `widget_template.py` | Shared widget helpers copied into generated packages |
-| `ai_assistant/` | Optional LLM integration (structured JSON turns) |
+| `ui.py` | Thin launcher (delegates to the package) |
+| `ryven_node_generator/` | Main Python package |
+| `ryven_node_generator/ui/` | PySide6 studio (`main_window`, `widgets`, `constants`) |
+| `ryven_node_generator/codegen/` | Jinja2 templates + `nodes.py` / `gui.py` generation |
+| `ryven_node_generator/preview/` | Flow-style node preview widget |
+| `ryven_node_generator/project/` | `nodes_config.json` / `generator_ai_chat.json` I/O |
+| `ryven_node_generator/assets/` | `widget_template.py` copied into generated packages |
+| `ryven_node_generator/ai_assistant/` | Optional LLM integration (structured JSON turns) |
 
 ## License
 

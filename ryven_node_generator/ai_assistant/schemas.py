@@ -36,3 +36,11 @@ class AssistantTurn(BaseModel):
             "Omit widget on data ports that only receive upstream Data. Null if no config change."
         ),
     )
+    self_test_cases: Optional[list[dict[str, Any]]] = Field(
+        default=None,
+        description=(
+            "Optional lightweight test cases for core_logic self-check. "
+            "Each item may contain: inputs (list or dict), expected_outputs (dict keyed by output index), "
+            "and note (string). Keep cases small and deterministic."
+        ),
+    )

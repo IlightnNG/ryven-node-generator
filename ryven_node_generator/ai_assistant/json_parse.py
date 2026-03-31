@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 import re
 
-from ai_assistant.schemas import AssistantTurn
+from .schemas import AssistantTurn
 
 
 def parse_assistant_turn_json(content: str) -> AssistantTurn:

@@ -7,7 +7,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-_GENERATOR_DIR = Path(__file__).resolve().parent.parent
+# Package root: ryven_node_generator/; repo root is one level above.
+_REPO_ROOT = Path(__file__).resolve().parent.parent.parent
 
 # DashScope OpenAI-compatible base URLs by region (see Alibaba Model Studio docs)
 _DASHSCOPE_BASE = {
@@ -19,11 +20,11 @@ _DASHSCOPE_BASE = {
 
 
 def load_env() -> None:
-    """Load Generator/.env, then repository-root .env (later file overrides)."""
-    load_dotenv(_GENERATOR_DIR / ".env", override=False)
-    root = _GENERATOR_DIR.parent / ".env"
-    if root.is_file():
-        load_dotenv(root, override=True)
+    """Load repository-root `.env`, then parent directory `.env` (later overrides)."""
+    load_dotenv(_REPO_ROOT / ".env", override=False)
+    parent_env = _REPO_ROOT.parent / ".env"
+    if parent_env.is_file():
+        load_dotenv(parent_env, override=True)
 
 
 def get_llm_provider() -> str:
@@ -111,3 +112,18 @@ def use_json_prompt_for_structured() -> bool:
 def ai_stream_enabled() -> bool:
     """Stream assistant-visible text when True (default). Set AI_STREAM=false to disable."""
     return os.getenv("AI_STREAM", "true").strip().lower() not in ("0", "false", "no", "off")
+
+
+def ai_self_repair_enabled() -> bool:
+    """Enable validator/test-in-the-loop multi-round repair (default true)."""
+    return os.getenv("AI_SELF_REPAIR", "true").strip().lower() not in ("0", "false", "no", "off")
+
+
+def ai_self_repair_max_rounds() -> int:
+    """Max generation rounds for self-repair loop; clamped to [1, 5]."""
+    raw = os.getenv("AI_SELF_REPAIR_MAX_ROUNDS", "2").strip()
+    try:
+        value = int(raw)
+    except ValueError:
+        return 2
+    return max(1, min(5, value))
