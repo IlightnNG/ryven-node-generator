@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-import json
 from typing import Any, Callable
 
-from ..config import ai_stream_enabled, load_env, use_json_prompt_for_structured
+from ..config import ai_context_compact_node_json, ai_stream_enabled, load_env, use_json_prompt_for_structured
+from ..context_budget import build_node_context_json
 from ..prompts import SYSTEM_PROMPT
 from .client import build_chat_model
 from .messages import history_to_messages, messages_for_stream
@@ -32,10 +32,10 @@ def stream_assistant_turn(
     """Stream user-visible text before JSON_SEP; parse JSON payload at the end."""
     model = build_chat_model()
 
-    context_json = json.dumps(
-        {"node": current_node, "existing_class_names": existing_class_names},
-        ensure_ascii=False,
-        indent=2,
+    context_json = build_node_context_json(
+        current_node,
+        existing_class_names,
+        compact=ai_context_compact_node_json(),
     )
     messages = messages_for_stream(pairs=history or [], user_text=user_text, context_json=context_json)
 
@@ -110,10 +110,10 @@ def run_assistant_turn(
     """Single non-streaming call when AI_STREAM=false."""
     model = build_chat_model()
 
-    context_json = json.dumps(
-        {"node": current_node, "existing_class_names": existing_class_names},
-        ensure_ascii=False,
-        indent=2,
+    context_json = build_node_context_json(
+        current_node,
+        existing_class_names,
+        compact=ai_context_compact_node_json(),
     )
     messages = history_to_messages(
         system=SYSTEM_PROMPT,

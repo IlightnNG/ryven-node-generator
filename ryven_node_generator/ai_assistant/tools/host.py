@@ -96,8 +96,15 @@ class ReactToolHost:
     def get_node_snapshot(self) -> str:
         return json.dumps(self.draft_ref["node"], ensure_ascii=False)[:120_000]
 
-    def run_stub_test(self, core_logic: str, cases_json: str = "[]") -> str:
+    def run_stub_test(self, core_logic: str = "", cases_json: str = "[]") -> str:
         node = copy.deepcopy(self.draft_ref["node"])
+        cl = (core_logic or "").strip()
+        if not cl:
+            cl = str(node.get("core_logic") or "").strip()
+        if not cl:
+            return (
+                "[error] no core_logic: set it with apply_node_patch or pass core_logic explicitly."
+            )
         try:
             raw = json.loads(cases_json) if cases_json.strip() else []
         except json.JSONDecodeError as e:
@@ -105,18 +112,33 @@ class ReactToolHost:
         if not isinstance(raw, list):
             return "[error] cases_json must be a JSON array"
         cases = normalize_test_cases(raw if raw else None, node)
-        summary = evaluate_stub_cases(core_logic.strip(), node, cases)
+        summary = evaluate_stub_cases(cl, node, cases)
         out = json.dumps(summary, ensure_ascii=False)
         cap = ai_agent_max_tool_output_chars()
         if len(out) > cap:
             return out[:cap] + f"\n[truncated to {cap} chars]"
         return out
 
-    def validate_core_logic_tool(self, code: str) -> str:
-        """AST + forbidden-name static check."""
-        if not (code or "").strip():
-            return json.dumps({"ok": False, "error": "empty code"}, ensure_ascii=False)
-        t = dedent_core_logic(code)
+    def compress_conversation_context_placeholder(
+        self, summary_of_older_turns: str, keep_last_messages: int = 8
+    ) -> str:
+        """Orchestrator applies compression; not used when ReAct handles the tool."""
+        return "[error] compress_conversation_context is handled by the orchestrator."
+
+    def validate_core_logic_tool(self, code: str = "") -> str:
+        """AST + forbidden-name static check.
+
+        Pass ``""`` or omit to validate the draft node's ``core_logic`` (after ``apply_node_patch``).
+        """
+        raw = (code or "").strip()
+        if not raw:
+            raw = str(self.draft_ref["node"].get("core_logic") or "").strip()
+        if not raw:
+            return json.dumps(
+                {"ok": False, "error": "empty code and draft has no core_logic"},
+                ensure_ascii=False,
+            )
+        t = dedent_core_logic(raw)
         ok, err = validate_core_logic(t)
         return json.dumps({"ok": ok, "error": err or None}, ensure_ascii=False)
 

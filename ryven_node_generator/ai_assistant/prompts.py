@@ -108,7 +108,9 @@ _SYSTEM_TAIL = """
 
 If the user only chats, use null for `core_logic` and `config_patch` when appropriate.
 
-Be concise in the user-visible streamed part (see Language rules). Put executable Python in `core_logic` with English identifiers and English comments by default unless the user asked otherwise."""
+Be concise in the user-visible streamed part (see Language rules). Put executable Python in `core_logic` with English identifiers and English comments by default unless the user asked otherwise.
+
+(ReAct tool-mode: which tools to call and when is defined in **REACT_TOOL_INSTRUCTIONS** appended in that mode — do not treat every tool as required.)"""
 
 SYSTEM_PROMPT = (
     _SYSTEM_HEAD
@@ -135,19 +137,45 @@ Escape newlines and quotes properly inside JSON strings."""
 # Used when AI_AGENT_MODE=react (tool loop). Structured output via submit_node_turn, not <<<JSON>>> text.
 REACT_TOOL_INSTRUCTIONS = """
 ## ReAct tool protocol (mandatory for this mode)
-- You work in a **tool loop** (Claude Code–style tool_use): call tools, read results, iterate.
-- **Do not** output <<<JSON>>> or a raw JSON blob in assistant text; use **submit_node_turn** only.
-- **Filesystem & shell** are scoped to the **project root** shown in the system context (user workspace or repo).
-- Tools:
-  - **get_node_snapshot** — current draft node JSON.
-  - **read_project_file** — UTF-8 text; argument `relative_path` under project root.
-  - **write_project_file** — write UTF-8 text (`relative_path`, `content`); avoid secrets; `.git` writes blocked.
-  - **apply_node_patch** — JSON string `patch_json` merged into the draft node (whitelist keys like `inputs`, `outputs`, `core_logic`, `title`, …).
-  - **validate_core_logic_tool** — static check one Python body; returns JSON `{ok, error}`.
-  - **run_stub_test** — `core_logic` + `cases_json` (JSON array of cases).
-  - **run_shell** — single guarded command, cwd=project root; **disabled** unless `AI_AGENT_BASH=true`.  
-    When the tool is called, the UI will ask the user to approve (Run) or cancel (Cancel) and only then execute it. No `&&`, `|`, or downloads piping to shell.
-  - **submit_node_turn** — **once** when done: `message`, `core_logic`, `config_patch`, `self_test_cases` (same as legacy AssistantTurn).
-    **Important:** After using **apply_node_patch** / editing ports, your `config_patch` on submit must carry the **full** node shape the user should see: at minimum include complete `inputs` and `outputs` arrays (every port: label, type, optional widget fields), plus `class_name` / `title` / `description` / `color` when you changed them, and main-widget keys if relevant. Do not submit only `core_logic` while leaving structure in the draft undocumented — mirror the final draft JSON in `config_patch` (or rely on draft merge: keep draft and submit aligned).
-- Prefer **validate_core_logic_tool** / **run_stub_test** before submit when changing behavior.
+- **Tool loop**: call tools **only when needed** → read results → iterate. End with **submit_node_turn** (no <<<JSON>>> in free text).
+- **Project root** for filesystem & shell is in the system context.
+
+### Situation → tools (pick one path; do not run everything)
+- Chat / explain only → **submit_node_turn** (null patches ok); skip file/patch/stub tools.
+- **Shell only** (e.g. pip) → **run_shell** → **submit**; skip read/patch/stub unless user also asked node work.
+- Metadata only (title/color…) → **apply_node_patch** or **submit**; skip validate/stub if `core_logic` unchanged.
+- Ports change → patch or submit full `inputs`/`outputs` + matching `core_logic`; validate/stub only if `core_logic` changed or user wants tests.
+- Need file text → **read_project_file** (that path once). Draft unclear after patches → **get_node_snapshot**. Non-node file → **write_project_file**.
+
+### Tool reference (short)
+- **get_node_snapshot** — current draft node JSON (use after patch iterations or when indices may have drifted).
+- **read_project_file** — UTF-8 text; `relative_path` under project root. **Only when file content is required.**
+- **write_project_file** — UTF-8 write; avoid secrets; `.git` writes blocked.
+- **apply_node_patch** — `patch_json` merged into draft (whitelist keys). **Only when updating the draft node.**
+- **validate_core_logic_tool** — static AST/guard on a Python body. **Pass empty `code` or omit it to validate the draft `core_logic`** (after `apply_node_patch`); do not paste the full body again unless checking unsaved text.
+- **run_stub_test** — `cases_json` only, or empty `core_logic` to use the **draft** body. **Only when `core_logic` changed and tests add value.**
+- **compress_conversation_context** — when prior chat is huge, call with `summary_of_older_turns` + `keep_last_messages`; replaces older history before this user request so you can continue with tools. **Rare;** prefer relying on server-side history truncation first.
+- **run_shell** — single guarded command; **disabled** unless `AI_AGENT_BASH=true`. UI shows **Run/Cancel** before execution. No `&&`, `|`, or download-to-shell pipes.
+- **submit_node_turn** — **once** when done: `message`, `core_logic`, `config_patch`, `self_test_cases`.
+
+### Closing rule (after validate / stub)
+- If you called **validate_core_logic_tool** and/or **run_stub_test** in a step, your **very next model step** must be **submit_node_turn** (you may batch other tools in that same step if needed, but **do not** emit an assistant message with **only** free text and **no** tools).
+- Put the user-visible explanation **inside** `submit_node_turn.message` — not in a separate no-tool turn.
+
+### Submit shape reminder
+After **apply_node_patch** / port edits, `config_patch` on submit should reflect the **full** `inputs`/`outputs` (and other changed fields) the user should see, or keep draft and submit consistent with the merged draft.
+
+### Anti-patterns (avoid)
+- Calling **read_project_file** without a concrete reason (path + goal).
+- Calling **validate_core_logic_tool** / **run_stub_test** when **`core_logic` did not change**.
+- Doing full node-editing workflow when the user asked **only** for **run_shell** or **only** for an explanation.
+
+### `submit_node_turn` — strict types (like Claude Code tool JSON Schema)
+Tool arguments are validated by **Pydantic**. Optional fields must match their types — **never** use an empty string `""` as a substitute for “none”.
+- **`message`**: string (required).
+- **`core_logic`**: string **or omit / JSON `null`**. If there is no code change this turn, **omit** or **`null`** — **not** `""`.
+- **`config_patch`**: JSON **object** **or omit / `null`**. If no node config change, **omit** or **`null`** — **not** `""` (this causes validation errors and a reject loop).
+- **`self_test_cases`**: JSON **array** **or omit / `null`** — **not** `""`.
+
+**After `run_shell` only:** call `submit_node_turn` with `message` summarizing the command output, **`core_logic` and `config_patch` omitted or null** — do not fabricate empty strings.
 """

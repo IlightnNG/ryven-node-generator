@@ -4,7 +4,13 @@ from __future__ import annotations
 
 from typing import Any, Callable
 
-from ..config import ai_agent_max_steps, ai_agent_mode
+from ..config import (
+    ai_agent_max_steps,
+    ai_agent_mode,
+    ai_context_max_chars_per_message,
+    ai_context_max_user_assistant_messages,
+)
+from ..context_budget import trim_history_pairs, truncate_history_message_texts
 
 ProgressCallback = Callable[[dict[str, Any]], None]
 DeltaCallback = Callable[[str], None]
@@ -34,6 +40,12 @@ def run_agent_session(
     plus optional ``react_trace``, ``repair_trace``, ``_streamed_reply_plain``.
     """
     mode = ai_agent_mode()
+    history = trim_history_pairs(
+        history, max_user_assistant_messages=ai_context_max_user_assistant_messages()
+    )
+    history = truncate_history_message_texts(
+        history, max_chars_per_message=ai_context_max_chars_per_message()
+    )
     if on_progress:
         on_progress({"phase": "session", "detail": "begin", "engine": mode})
 

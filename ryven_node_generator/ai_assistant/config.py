@@ -127,6 +127,66 @@ def ai_agent_mode() -> str:
     return "react"
 
 
+def ai_context_max_user_assistant_messages() -> int:
+    """Max prior **user + assistant** chat messages sent to the LLM per request.
+
+    ``0`` = unlimited (full history). Default ``48`` (~24 rounds). UI ``system`` rows are not counted.
+    """
+    raw = os.getenv("AI_CONTEXT_MAX_MESSAGES", "48").strip()
+    try:
+        v = int(raw)
+    except ValueError:
+        return 48
+    if v <= 0:
+        return 0
+    return min(500, v)
+
+
+def ai_context_max_chars_per_message() -> int:
+    """Max characters per prior user/assistant message body (after count trim).
+
+    ``0`` = unlimited. Default ``12000`` keeps long assistant rants from blowing the context.
+    """
+    raw = os.getenv("AI_CONTEXT_MAX_CHARS_PER_MESSAGE", "12000").strip()
+    try:
+        v = int(raw)
+    except ValueError:
+        return 12_000
+    if v <= 0:
+        return 0
+    return min(500_000, v)
+
+
+def ai_agent_session_log_path(project_root: str | None) -> Path | None:
+    """If ``AI_AGENT_SESSION_LOG`` is set, append JSONL lines to this file (ReAct debug).
+
+    Relative paths resolve under ``project_root`` when given, else under :func:`default_agent_project_root`.
+    Empty / unset → no file logging.
+    """
+    raw = os.getenv("AI_AGENT_SESSION_LOG", "").strip()
+    if not raw:
+        return None
+    p = Path(raw).expanduser()
+    if p.is_absolute():
+        return p.resolve()
+    base = Path(project_root).expanduser().resolve() if project_root else default_agent_project_root()
+    return (base / p).resolve()
+
+
+def ai_agent_session_log_field_chars() -> int:
+    """Max characters per message field / tool result blob in the session log (default 250k)."""
+    try:
+        v = int(os.getenv("AI_AGENT_SESSION_LOG_FIELD_CHARS", "250000").strip())
+    except ValueError:
+        return 250_000
+    return max(5_000, min(2_000_000, v))
+
+
+def ai_context_compact_node_json() -> bool:
+    """When true (default), node JSON in the context system message is minified (no indent)."""
+    return os.getenv("AI_CONTEXT_COMPACT_JSON", "true").strip().lower() not in ("0", "false", "no", "off")
+
+
 def ai_agent_max_steps() -> int:
     """Max model steps in ReAct loop (each step may include multiple tool calls). Clamped to [1, 64]."""
     raw = os.getenv("AI_AGENT_MAX_STEPS", "24").strip()

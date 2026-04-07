@@ -30,7 +30,7 @@ class AssistantTurn(BaseModel):
             "index K, then optionally assign the value to a local variable with a meaningful name. "
             "For arrays use `np.asarray(value)`; for typed literals use `ast.literal_eval(str(value))` when the port has "
             "a `line_edit` widget. Use `self.set_output_val(j, Data(...))` for data outputs. "
-            "Non-null whenever behavior is requested."
+            "Non-null whenever behavior is requested. For tool calls: use JSON null or omit when unchanged — never \"\"."
         ),
     )
     config_patch: Optional[dict[str, Any]] = Field(
@@ -40,7 +40,8 @@ class AssistantTurn(BaseModel):
             "`outputs` arrays (all ports). Keys: class_name, title, description, color, inputs, outputs, "
             "core_logic, has_main_widget, main_widget_template, main_widget_args, main_widget_pos, "
             "main_widget_code. Omit widget on data-only ports. "
-            "Null only when there is truly no structural/metadata change."
+            "Null only when there is truly no structural/metadata change. "
+            "Must be a JSON object or null when using tools — never an empty string."
         ),
     )
     self_test_cases: Optional[list[dict[str, Any]]] = Field(
@@ -48,6 +49,7 @@ class AssistantTurn(BaseModel):
         description=(
             "Optional lightweight test cases for core_logic self-check. "
             "Each item may contain: inputs (list or dict), expected_outputs (dict keyed by output index), "
-            "and note (string). Keep cases small and deterministic."
+            "and note (string). Keep cases small and deterministic. "
+            "JSON array or null/omit — never \"\"."
         ),
     )

@@ -1,5 +1,7 @@
 .env
-docs/
+.ryven_agent_session.jsonl
+**/agent_session*.jsonl
+# docs/
 __pycache__/
 venv/
 build/

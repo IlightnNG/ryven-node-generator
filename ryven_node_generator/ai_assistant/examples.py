@@ -26,7 +26,8 @@ _NODE_DATA_FLOW = {
     "main_widget_code": "# Only when main_widget_template is custom",
 }
 
-NODE_CONFIG_JSON_EXAMPLE = json.dumps(_NODE_DATA_FLOW, ensure_ascii=False, indent=2)
+_NODE_JSON_OPTS = {"ensure_ascii": False, "separators": (",", ":")}
+NODE_CONFIG_JSON_EXAMPLE = json.dumps(_NODE_DATA_FLOW, **_NODE_JSON_OPTS)
 
 # When the user must type a literal on the node (no upstream array), use a widget on the data port.
 _NODE_LITERAL_INPUT = {
@@ -60,7 +61,7 @@ _NODE_LITERAL_INPUT = {
     "main_widget_code": "# Only when main_widget_template is custom",
 }
 
-NODE_CONFIG_LITERAL_EXAMPLE = json.dumps(_NODE_LITERAL_INPUT, ensure_ascii=False, indent=2)
+NODE_CONFIG_LITERAL_EXAMPLE = json.dumps(_NODE_LITERAL_INPUT, **_NODE_JSON_OPTS)
 
 _PATCH_MINI = {
     "class_name": "AddFloatsNode",
@@ -93,7 +94,7 @@ _PATCH_MINI = {
     ),
 }
 
-CONFIG_PATCH_MINI_EXAMPLE = json.dumps(_PATCH_MINI, ensure_ascii=False, indent=2)
+CONFIG_PATCH_MINI_EXAMPLE = json.dumps(_PATCH_MINI, **_NODE_JSON_OPTS)
 
 INPUT_WIDGET_TYPES = (
     "If a data port needs no on-graph editing/control, you may omit `widget` (recommended for pure tensors/arrays). "
