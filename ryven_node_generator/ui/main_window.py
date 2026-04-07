@@ -74,6 +74,7 @@ class GeneratorDesignerUI(QMainWindow):
         self._ai_pending_changed_keys: set[str] = set()
         self._ai_highlighted_widgets: set = set()
         self._ai_style_backup: dict[int, str] = {}
+        self._ai_system_block_collapsed: dict[str, bool] = {}
 
         # When AI diff preview is enabled, store scroll anchors per tab.
         self._code_diff_anchors: dict[str, str] = {}
@@ -337,21 +338,46 @@ class GeneratorDesignerUI(QMainWindow):
                 lay.addWidget(self._ai_make_user_message_row(text, i, meta))
                 i += 1
                 # One user turn may include multiple system progress lines and an assistant reply.
+                system_lines: list[str] = []
+                system_start = i
                 while i < n:
                     r2, t2, _m = project_ws.normalize_ai_turn(h[i])
                     if r2 == "user":
                         break
                     if r2 == "system":
-                        lay.addWidget(self._ai_make_system_bubble(t2))
+                        system_lines.append(t2)
                     elif r2 == "assistant":
+                        if system_lines:
+                            lay.addWidget(
+                                self._ai_make_system_block_bubble(
+                                    system_lines,
+                                    block_key=f"{system_start}:{i}",
+                                )
+                            )
+                            system_lines = []
                         lay.addWidget(self._ai_make_assistant_bubble(t2))
                     i += 1
+                if system_lines:
+                    lay.addWidget(
+                        self._ai_make_system_block_bubble(
+                            system_lines,
+                            block_key=f"{system_start}:{i}",
+                        )
+                    )
             elif role == "assistant":
                 lay.addWidget(self._ai_make_assistant_bubble(text))
                 i += 1
             elif role == "system":
-                lay.addWidget(self._ai_make_system_bubble(text))
+                start = i
+                lines = [text]
                 i += 1
+                while i < n:
+                    r2, t2, _m = project_ws.normalize_ai_turn(h[i])
+                    if r2 != "system":
+                        break
+                    lines.append(t2)
+                    i += 1
+                lay.addWidget(self._ai_make_system_block_bubble(lines, block_key=f"{start}:{i}"))
             else:
                 i += 1
 
@@ -581,6 +607,80 @@ class GeneratorDesignerUI(QMainWindow):
         body.setText(text or "")
         blay.addWidget(meta)
         blay.addWidget(body)
+        return wrap
+
+    def _ai_make_system_item_editor(
+        self, text: str, max_visible_lines: int = 5, parent: QWidget | None = None
+    ) -> QTextEdit:
+        body = QTextEdit(parent)
+        body.setReadOnly(True)
+        body.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        body.setObjectName("AiBubbleBody")
+        body.setStyleSheet(
+            "color: #c4a9a4; background: transparent; border: 1px solid #5a4e50; border-radius: 6px;"
+        )
+        body.viewport().setAutoFillBackground(False)
+        body.setText(text or "")
+        fm = body.fontMetrics()
+        line_height = max(1, fm.lineSpacing())
+        line_count = max(1, len((text or "").splitlines()))
+        visible_lines = min(max_visible_lines, line_count)
+        height = int(visible_lines * line_height + 30)
+        body.setFixedHeight(height)
+        if line_count > max_visible_lines:
+            body.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        else:
+            body.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        return body
+
+    def _ai_toggle_system_block(self, block_key: str, content: QWidget, btn: QToolButton):
+        collapsed = bool(self._ai_system_block_collapsed.get(block_key, False))
+        collapsed = not collapsed
+        self._ai_system_block_collapsed[block_key] = collapsed
+        content.setVisible(not collapsed)
+        btn.setText("▸" if collapsed else "▾")
+        btn.setToolTip("Expand system details" if collapsed else "Collapse system details")
+        self._ai_force_chat_to_bottom()
+
+    def _ai_make_system_block_bubble(self, lines: list[str], block_key: str) -> QWidget:
+        wrap = QFrame()
+        wrap.setObjectName("AiSystemBubble")
+        blay = QVBoxLayout(wrap)
+        blay.setContentsMargins(12, 10, 12, 10)
+        blay.setSpacing(6)
+
+        header = QWidget(wrap)
+        header.setStyleSheet("background: transparent;")
+        hlay = QHBoxLayout(header)
+        hlay.setContentsMargins(0, 0, 0, 0)
+        hlay.setSpacing(8)
+        toggle = QToolButton(header)
+        toggle.setAutoRaise(True)
+        toggle.setStyleSheet("background: transparent; color: #c4a9a4; border: none;")
+        meta = QLabel(f"System ({len(lines)} step{'s' if len(lines) != 1 else ''})")
+        meta.setObjectName("AiChatMeta")
+        meta.setStyleSheet("background: transparent;")
+        hlay.addWidget(toggle, 0, Qt.AlignTop)
+        hlay.addWidget(meta, 1, Qt.AlignVCenter)
+
+        content = QWidget(wrap)
+        content.setStyleSheet("background: transparent;")
+        cl = QVBoxLayout(content)
+        cl.setContentsMargins(0, 0, 0, 0)
+        cl.setSpacing(6)
+        for t in lines:
+            cl.addWidget(self._ai_make_system_item_editor(t, parent=content))
+
+        collapsed = bool(self._ai_system_block_collapsed.get(block_key, False))
+        content.setVisible(not collapsed)
+        toggle.setText("▸" if collapsed else "▾")
+        toggle.setToolTip("Expand system details" if collapsed else "Collapse system details")
+        toggle.clicked.connect(
+            lambda _checked=False, k=block_key, c=content, b=toggle: self._ai_toggle_system_block(k, c, b)
+        )
+
+        blay.addWidget(header)
+        blay.addWidget(content)
         return wrap
 
     def _ai_withdraw_turn(self, user_idx: int):
