@@ -1,6 +1,7 @@
 """Reusable Qt widgets for the node editor (ports, AI worker)."""
 
 import copy
+import threading
 from PySide6.QtWidgets import (
     QComboBox,
     QFrame,
@@ -14,9 +15,51 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import QThread, Signal
 
-from ryven_node_generator.ai_assistant.core.self_repair import run_turn_with_self_repair
+from ryven_node_generator.ai_assistant.orchestration import run_agent_session
 
 from .constants import EDITOR_ROW_H, INPUT_WIDGET_EXAMPLES
+
+
+class ShellApprovalController:
+    """Cross-thread controller for manual shell approval.
+
+    The ReAct worker thread calls `begin()` + `wait_approved()` and blocks.
+    The UI thread receives `react_shell_request` and calls `decide()` to unblock it.
+    """
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._event = threading.Event()
+        self._request_id: str | None = None
+        self._approved: bool = False
+
+    def begin(self, request_id: str) -> None:
+        with self._lock:
+            self._request_id = request_id
+            self._approved = False
+            self._event.clear()
+
+    def decide(self, request_id: str, approved: bool) -> None:
+        with self._lock:
+            if self._request_id != request_id:
+                return
+            self._approved = bool(approved)
+            self._event.set()
+
+    def cancel_pending(self) -> None:
+        """Unblock any pending wait (treated as not approved)."""
+        with self._lock:
+            self._approved = False
+            self._event.set()
+
+    def wait_approved(self, request_id: str, *, should_stop=None) -> bool:
+        """Block until UI decides (or should_stop becomes true)."""
+        while True:
+            if should_stop is not None and should_stop():
+                return False
+            if self._event.wait(timeout=0.25):
+                with self._lock:
+                    return bool(self._request_id == request_id and self._approved)
 
 
 class NoWheelComboBox(QComboBox):
@@ -33,27 +76,43 @@ class _AITurnWorker(QThread):
     failed = Signal(str)
     stopped = Signal()
 
-    def __init__(self, user_text, history, current_node, class_names, parent=None):
+    def __init__(
+        self,
+        user_text,
+        history,
+        current_node,
+        class_names,
+        project_root=None,
+        parent=None,
+        shell_approval_controller: ShellApprovalController | None = None,
+    ):
         super().__init__(parent)
         self._user_text = user_text
         self._history = list(history)
         self._current_node = copy.deepcopy(current_node)
         self._class_names = list(class_names)
+        self._project_root = project_root
         self._stop_requested = False
+        self._shell_approval_controller = shell_approval_controller
 
     def stop(self):
         self._stop_requested = True
+        if self._shell_approval_controller is not None:
+            # Unblock if we are waiting for user shell approval.
+            self._shell_approval_controller.cancel_pending()
 
     def run(self):
         try:
-            r = run_turn_with_self_repair(
+            r = run_agent_session(
                 user_text=self._user_text,
                 current_node=self._current_node,
                 existing_class_names=self._class_names,
                 history=self._history,
+                project_root=self._project_root,
                 on_progress=self.progress_event.emit,
                 on_reply_delta=self.stream_delta.emit,
                 should_stop=lambda: self._stop_requested,
+                shell_approval_controller=self._shell_approval_controller,
             )
             if self._stop_requested:
                 self.stopped.emit()

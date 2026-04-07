@@ -8,7 +8,7 @@ from pathlib import Path
 
 from jinja2 import Template
 
-from .templates import GUI_TEMPLATE, NODES_TEMPLATE
+from .templates_v2 import GUI_TEMPLATE, NODES_TEMPLATE
 
 WIDGET_TEMPLATE_FILENAME = "widget_template.py"
 _PKG_ROOT = Path(__file__).resolve().parent.parent

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 from typing import Any
 
 _ALLOWED = frozenset({
@@ -18,6 +19,22 @@ _ALLOWED = frozenset({
     "main_widget_pos",
     "main_widget_code",
 })
+
+
+def whitelisted_config_diff(baseline: dict[str, Any], effective: dict[str, Any]) -> dict[str, Any]:
+    """Keys in ``_ALLOWED`` whose values differ between baseline and effective (deep ``!=``).
+
+    ``core_logic`` is omitted: the UI uses top-level ``core_logic`` from :func:`finalize_parsed_turn`.
+    """
+    patch: dict[str, Any] = {}
+    for k in _ALLOWED:
+        if k == "core_logic":
+            continue
+        b_val = baseline.get(k)
+        e_val = effective.get(k)
+        if b_val != e_val:
+            patch[k] = copy.deepcopy(e_val)
+    return patch
 
 
 def apply_config_patch(node: dict[str, Any], patch: dict[str, Any] | None) -> list[str]:

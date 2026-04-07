@@ -46,7 +46,7 @@ from .constants import (
     STYLE,
     _AI_MODIFIED_TEXT_GREEN,
 )
-from .widgets import NoWheelComboBox, PortCard, _AITurnWorker
+from .widgets import NoWheelComboBox, PortCard, _AITurnWorker, ShellApprovalController
 class GeneratorDesignerUI(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -63,6 +63,7 @@ class GeneratorDesignerUI(QMainWindow):
         self._ai_history = []
         self._ai_last_result = None
         self._ai_worker = None
+        self._ai_shell_approval_controller: ShellApprovalController | None = None
         self._ai_tab_widget = None
         self._ai_streaming_this_turn = False
         self._ai_turn_in_progress = False
@@ -551,10 +552,13 @@ class GeneratorDesignerUI(QMainWindow):
         blay.setSpacing(4)
         meta = QLabel("Assistant")
         meta.setObjectName("AiChatMeta")
-        body = QLabel(text)
+        body = QTextEdit()
+        body.setReadOnly(True)
+        body.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        body.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        body.setFixedHeight(78)
         body.setObjectName("AiBubbleBody")
-        body.setWordWrap(True)
-        body.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        body.setText(text or "")
         blay.addWidget(meta)
         blay.addWidget(body)
         return wrap
@@ -567,11 +571,14 @@ class GeneratorDesignerUI(QMainWindow):
         blay.setSpacing(4)
         meta = QLabel("System")
         meta.setObjectName("AiChatMeta")
-        body = QLabel(text)
+        body = QTextEdit()
+        body.setReadOnly(True)
+        body.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        body.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        body.setFixedHeight(78)
         body.setObjectName("AiBubbleBody")
         body.setStyleSheet("color: #c4a9a4;")
-        body.setWordWrap(True)
-        body.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        body.setText(text or "")
         blay.addWidget(meta)
         blay.addWidget(body)
         return wrap
@@ -1605,7 +1612,16 @@ class GeneratorDesignerUI(QMainWindow):
         names = [n.get("class_name", "") for n in self.nodes_data]
         self._ai_set_busy(True)
         hist_for_api = project_ws.ai_history_for_llm(list(self._ai_history[:-1]))
-        self._ai_worker = _AITurnWorker(text, hist_for_api, node, names, self)
+        self._ai_shell_approval_controller = ShellApprovalController()
+        self._ai_worker = _AITurnWorker(
+            text,
+            hist_for_api,
+            node,
+            names,
+            self._project_root,
+            self,
+            shell_approval_controller=self._ai_shell_approval_controller,
+        )
         self._ai_worker.stream_delta.connect(self._ai_on_stream_delta)
         self._ai_worker.progress_event.connect(self._ai_on_worker_progress)
         self._ai_worker.finished_ok.connect(self._ai_on_worker_ok)
@@ -1651,6 +1667,70 @@ class GeneratorDesignerUI(QMainWindow):
             summary = [str(x) for x in (event.get("summary") or []) if str(x).strip()]
             msg = f"Round {rnd} cases: {', '.join(summary[:3])}" if summary else f"Round {rnd} cases: default smoke"
             self._ai_history.append(("system", msg, {}))
+        elif et == "react_step":
+            step = int(event.get("step", 0))
+            tools = [str(x) for x in (event.get("tools") or []) if str(x).strip()]
+            msg = f"ReAct step {step}: " + (", ".join(tools) if tools else "(no tools)")
+            assistant_text = str(event.get("assistant_text") or "").strip()
+            if assistant_text:
+                # Keep it short: 2~3 lines max in chat bubble.
+                lines = [l.strip() for l in assistant_text.splitlines() if l.strip()]
+                if lines:
+                    msg += "\n- AI:\n  " + "\n  ".join(lines[:3])
+                else:
+                    msg += "\n- AI: " + assistant_text
+            self._ai_history.append(("system", msg, {}))
+        elif et == "react_tool_call":
+            step = int(event.get("step", 0))
+            tool = str(event.get("tool") or "")
+            args_preview = str(event.get("args_preview") or "").strip()
+            msg = f"ReAct tool call @ {step}: {tool}"
+            if args_preview:
+                msg += "\n- args: " + args_preview
+            self._ai_history.append(("system", msg, {}))
+        elif et == "react_shell_request":
+            step = int(event.get("step", 0))
+            request_id = str(event.get("request_id") or "")
+            cmd = str(event.get("command") or "").strip()
+            msg = f"ReAct shell request @ {step}\n- cmd: {cmd}"
+            self._ai_history.append(("system", msg, {}))
+
+            approved = False
+            if self._ai_shell_approval_controller is not None and request_id:
+                mb = QMessageBox(self)
+                mb.setWindowTitle("AI Shell Approval")
+                mb.setIcon(QMessageBox.Question)
+                mb.setText("AI requests to run a shell command.\n\n" + cmd + "\n\nRun it?")
+                mb.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+                mb.setButtonText(QMessageBox.Yes, "Run")
+                mb.setButtonText(QMessageBox.No, "Cancel")
+                r = mb.exec()
+                approved = r == QMessageBox.Yes
+
+            if self._ai_shell_approval_controller is not None and request_id:
+                self._ai_shell_approval_controller.decide(request_id, approved)
+        elif et == "react_tool_result":
+            step = int(event.get("step", 0))
+            tool = str(event.get("tool") or "")
+            result_preview = str(event.get("result_preview") or "").strip()
+            msg = f"ReAct tool result @ {step}: {tool}"
+            if result_preview:
+                lines = [l.strip() for l in result_preview.splitlines() if l.strip()]
+                if lines:
+                    msg += "\n- " + "\n  ".join(lines[:3])
+                else:
+                    msg += "\n- " + result_preview
+            self._ai_history.append(("system", msg, {}))
+        elif et == "react_submit_rejected":
+            step = int(event.get("step", 0))
+            err = str(event.get("error") or "").strip()
+            args_preview = str(event.get("args_preview") or "").strip()
+            msg = f"submit_node_turn rejected @ {step}"
+            if err:
+                msg += "\n- error: " + err
+            if args_preview:
+                msg += "\n- args: " + args_preview
+            self._ai_history.append(("system", msg, {}))
         else:
             return
         self._rebuild_ai_chat_ui()
@@ -1669,8 +1749,17 @@ class GeneratorDesignerUI(QMainWindow):
                 self._ai_on_stream_delta(msg + "\n")
             self._ai_on_stream_delta("\n")
         self._ai_history.append(("assistant", msg, {}))
+        react_trace = result.get("react_trace") or []
         trace = result.get("repair_trace") or []
-        if trace:
+        if react_trace:
+            self._ai_history.append(
+                (
+                    "system",
+                    f"ReAct finished: {len(react_trace)} model step(s); last step index {int(result.get('repair_round', 0))}.",
+                    {},
+                )
+            )
+        elif trace:
             final_round = int(result.get("repair_round", len(trace)))
             passed_rounds = sum(1 for t in trace if str(t.get("status")) == "passed")
             self._ai_history.append(
@@ -1703,6 +1792,9 @@ class GeneratorDesignerUI(QMainWindow):
         self._schedule_autosave()
 
     def _ai_build_patch_from_result(self, result: dict) -> dict:
+        # Keys read from finalize_parsed_turn / ReAct output (see docs/agent-refactor-roadmap-for-ai.md §0):
+        # core_logic, config_patch, message, validation_error, self_test_cases,
+        # repair_trace, repair_round, _streamed_reply_plain, _stream_had_visible_reply, self_test_summary.
         logic = result.get("core_logic")
         patch = dict(result.get("config_patch") or {})
         if logic:

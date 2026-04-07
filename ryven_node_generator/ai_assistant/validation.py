@@ -14,7 +14,6 @@ _FORBIDDEN = (
     "__import__",
     "exec(",
     "compile(",
-    "open(",
 )
 
 

@@ -1,4 +1,8 @@
-"""Structured model output for one assistant turn."""
+"""Structured model output for one assistant turn.
+
+This Pydantic model is the JSON contract for the final assistant payload.
+UI and merge logic depend on these fields — see docs/agent-refactor-roadmap-for-ai.md §0.
+"""
 
 from __future__ import annotations
 
@@ -21,19 +25,22 @@ class AssistantTurn(BaseModel):
         description=(
             "Highest-priority field: Python body inside the try-block. English identifiers and comments by default; "
             "another language only if the user explicitly requested it for code/comments. "
-            "The template binds each data input as inK = self.get_input_val(K); inK is already the unwrapped value "
-            "when upstream sends Data(payload). Use np.asarray(inK) for arrays; use widgets/literal_eval only when "
-            "the port has a line_edit etc. Use self.set_output_val(j, Data(...)) for data outputs. "
+            "The generated nodes provide `self.get_input_val(K)` (returns the unwrapped payload when the wire carries "
+            "`Data(payload)`). Therefore, `core_logic` should explicitly call `self.get_input_val(K)` for each data input "
+            "index K, then optionally assign the value to a local variable with a meaningful name. "
+            "For arrays use `np.asarray(value)`; for typed literals use `ast.literal_eval(str(value))` when the port has "
+            "a `line_edit` widget. Use `self.set_output_val(j, Data(...))` for data outputs. "
             "Non-null whenever behavior is requested."
         ),
     )
     config_patch: Optional[dict[str, Any]] = Field(
         default=None,
         description=(
-            "Partial node JSON. Include class_name when the Python class name in nodes.py should change. "
-            "Keys: class_name, title, description, color, inputs, outputs, core_logic, "
-            "has_main_widget, main_widget_template, main_widget_args, main_widget_pos, main_widget_code. "
-            "Omit widget on data ports that only receive upstream Data. Null if no config change."
+            "Partial node JSON. When inputs/outputs or titles change, include the **full** `inputs` and "
+            "`outputs` arrays (all ports). Keys: class_name, title, description, color, inputs, outputs, "
+            "core_logic, has_main_widget, main_widget_template, main_widget_args, main_widget_pos, "
+            "main_widget_code. Omit widget on data-only ports. "
+            "Null only when there is truly no structural/metadata change."
         ),
     )
     self_test_cases: Optional[list[dict[str, Any]]] = Field(

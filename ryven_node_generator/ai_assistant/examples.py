@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import json
 
-# Typical Ryven pattern: upstream node sends Data(ndarray or nested list). NodeBase.get_input_val
-# already unwraps .payload, so inK is the raw value — no line_edit needed.
+# Typical Ryven pattern: upstream node sends Data(ndarray or nested list).
+# NodeBase.get_input_val(index) already unwraps .payload.
 _NODE_DATA_FLOW = {
     "class_name": "ToMatrixNode",
     "title": "To matrix",
@@ -15,7 +15,8 @@ _NODE_DATA_FLOW = {
     "outputs": [{"label": "matrix", "type": "data"}],
     "core_logic": (
         "import numpy as np\n"
-        "x = np.asarray(in0)\n"
+        "arr = self.get_input_val(0)\n"
+        "x = np.asarray(arr)\n"
         "self.set_output_val(0, Data(x))"
     ),
     "has_main_widget": False,
@@ -48,7 +49,8 @@ _NODE_LITERAL_INPUT = {
     "core_logic": (
         "import ast\n"
         "import numpy as np\n"
-        "x = np.asarray(ast.literal_eval(str(in0)))\n"
+        "txt = self.get_input_val(0)\n"
+        "x = np.asarray(ast.literal_eval(str(txt)))\n"
         "self.set_output_val(0, Data(x))"
     ),
     "has_main_widget": False,
@@ -84,15 +86,20 @@ _PATCH_MINI = {
         },
     ],
     "outputs": [{"label": "sum", "type": "data"}],
-    "core_logic": "self.set_output_val(0, Data(float(in0) + int(in1)))",
+    "core_logic": (
+        "a = float(self.get_input_val(0))\n"
+        "b = int(self.get_input_val(1))\n"
+        "self.set_output_val(0, Data(a + b))"
+    ),
 }
 
 CONFIG_PATCH_MINI_EXAMPLE = json.dumps(_PATCH_MINI, ensure_ascii=False, indent=2)
 
 INPUT_WIDGET_TYPES = (
-    "Omit `widget` on a data port when the value comes from upstream nodes as Data (recommended for tensors/"
-    "arrays). Use int_spinbox, float_spinbox, line_edit, combo_box, slider, or type None only when the node "
-    "needs on-graph parameter editing. Exec ports never have widgets. "
+    "If a data port needs no on-graph editing/control, you may omit `widget` (recommended for pure tensors/arrays). "
+    "However, if you want the port to show/edit a UI control (as in the samples), include `widget` on the port. "
+    "Use int_spinbox, float_spinbox, line_edit, combo_box, slider, or type None only when the node needs an "
+    "on-graph control. Exec ports never have widgets. "
     "The `args` string is passed into the widget factory (see Generator/widget_template.py and gui template); "
     "do not invent new `type` strings unless a matching factory exists in widget_template."
 )

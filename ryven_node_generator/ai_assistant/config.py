@@ -19,6 +19,11 @@ _DASHSCOPE_BASE = {
 }
 
 
+def default_agent_project_root() -> Path:
+    """When no workspace is open, tools use the generator repository root."""
+    return _REPO_ROOT.resolve()
+
+
 def load_env() -> None:
     """Load repository-root `.env`, then parent directory `.env` (later overrides)."""
     load_dotenv(_REPO_ROOT / ".env", override=False)
@@ -114,16 +119,56 @@ def ai_stream_enabled() -> bool:
     return os.getenv("AI_STREAM", "true").strip().lower() not in ("0", "false", "no", "off")
 
 
-def ai_self_repair_enabled() -> bool:
-    """Enable validator/test-in-the-loop multi-round repair (default true)."""
-    return os.getenv("AI_SELF_REPAIR", "true").strip().lower() not in ("0", "false", "no", "off")
+def ai_agent_mode() -> str:
+    """``react`` (default): ReAct tool loop + submit_node_turn. ``legacy``: single-turn <<<JSON>>> / structured output without tools."""
+    m = os.getenv("AI_AGENT_MODE", "react").strip().lower()
+    if m in ("legacy", "single", "single_turn"):
+        return "legacy"
+    return "react"
 
 
-def ai_self_repair_max_rounds() -> int:
-    """Max generation rounds for self-repair loop; clamped to [1, 5]."""
-    raw = os.getenv("AI_SELF_REPAIR_MAX_ROUNDS", "2").strip()
+def ai_agent_max_steps() -> int:
+    """Max model steps in ReAct loop (each step may include multiple tool calls). Clamped to [1, 64]."""
+    raw = os.getenv("AI_AGENT_MAX_STEPS", "24").strip()
     try:
         value = int(raw)
     except ValueError:
-        return 2
-    return max(1, min(5, value))
+        return 24
+    return max(1, min(64, value))
+
+
+def ai_agent_bash_enabled() -> bool:
+    """Allow run_shell tool when true (default false)."""
+    return os.getenv("AI_AGENT_BASH", "false").strip().lower() in ("1", "true", "yes", "on")
+
+
+def ai_agent_max_read_file_chars() -> int:
+    try:
+        v = int(os.getenv("AI_AGENT_MAX_READ_CHARS", "200000").strip())
+    except ValueError:
+        return 200_000
+    return max(1_000, min(500_000, v))
+
+
+def ai_agent_max_write_file_bytes() -> int:
+    try:
+        v = int(os.getenv("AI_AGENT_MAX_WRITE_BYTES", "512000").strip())
+    except ValueError:
+        return 512_000
+    return max(1_000, min(2_000_000, v))
+
+
+def ai_agent_max_tool_output_chars() -> int:
+    try:
+        v = int(os.getenv("AI_AGENT_MAX_TOOL_OUTPUT_CHARS", "32000").strip())
+    except ValueError:
+        return 32_000
+    return max(2_000, min(200_000, v))
+
+
+def ai_agent_shell_timeout_sec() -> int:
+    try:
+        v = int(os.getenv("AI_AGENT_SHELL_TIMEOUT", "45").strip())
+    except ValueError:
+        return 45
+    return max(5, min(120, v))
