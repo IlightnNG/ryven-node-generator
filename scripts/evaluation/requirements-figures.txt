@@ -1,4 +1,4 @@
-# Thesis evaluation figures — Plotly (+ Kaleido for static PDF/PNG export)
+# Thesis evaluation figures: Plotly + Kaleido for PDF/PNG
 # pip install -r scripts/evaluation/requirements-figures.txt
 plotly>=5.18.0
 kaleido>=0.2.1

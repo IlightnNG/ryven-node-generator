@@ -69,44 +69,31 @@
 
 ---
 
-## 3. 实验设计：五种工作流（你提出的拆分，可行且建议采用）
+## 3. 实验设计：六种工作流（authoring surface × LLM 深度）
 
-建议固定为 5 个条件（workflow），并**写死协议**（允许/禁止的行为），避免混淆：
+在原先“LLM 深度”的基础上，增加 **是否使用 Ryven Node Generator（模板落盘）** 这一维，更贴近真实用法，也便于单独论证 **Generator 的便捷性**。
 
-### W1：纯手写（Manual）
+建议固定为 **6 个互斥条件**，CSV 中用 `workflow` 键（与脚本一致），并增加派生列 **`uses_generator`**（0/1）供分层统计或因子分析：
 
-- **允许**：IDE、查阅本仓库已有节点模板/历史代码（若你认为现实开发允许）。
-- **禁止**：任何 LLM（包括普通聊天、Copilot 等）。
-- **产物**：手写 `nodes.py/gui.py` 或手写一个等价包结构（与生成器输出目标一致）。
+| 键 | `uses_generator` | 协议摘要 |
+|----|------------------|----------|
+| `W1_hand_only` | 0 | **直接编辑** `nodes.py` / `gui.py`；禁止任何 LLM。 |
+| `W2_hand_chat` | 0 | 直接编辑源文件 + **普通 LLM 对话**（仅复制粘贴；无工具环、无自动写盘）。 |
+| `W3_gen_chat` | 1 | 先用 **Generator** 生成/调整端口与样板并保存包，再用 **普通 LLM 对话**补 `core_logic`（同上，无 Agent 工具环）。 |
+| `W4_gen_single` | 1 | Generator + **单轮 Agent**（一次 `submit_node_turn` 或 `max_steps=1`；允许各一次校验与 stub，**不允许**自修复循环）。 |
+| `W5_gen_3stage` | 1 | Generator + **三阶段管线**（Plan → Implement → Verify；Verify 失败可回到 Implement，**总轮次有上限**）。 |
+| `W6_gen_react` | 1 | Generator + **ReAct 工具循环**（`run_react_session`：validate/stub/apply_patch 等直至成功或 `max_steps`）。 |
 
-### W2：纯手写 + 普通 LLM 对话（Chat）
+**因子视角（写论文时可一句话点明）**：
 
-- **允许**：把需求发给 LLM 问建议/代码片段（纯对话）。
-- **禁止**：不允许“工具循环/代理框架自动修复”；不允许让 LLM 直接操作项目文件（只复制粘贴）。
-- **目的**：隔离“有 LLM 但无系统护栏/无工具化循环”的真实增益。
+- **因子 A**：`uses_generator ∈ {0,1}` — 对比 W1↔W3、W2↔W3 可量化“同样用聊天补逻辑时，先生成器打底”的时间与错误率差异。  
+- **因子 B**：在 `uses_generator=1` 的子集中，对比 W3→W6 可得 **结构化 Agent / ReAct** 相对 **纯聊天** 的收益。
 
-### W3：单层 Agent（Single-turn Agent）
+**协议要点（防混淆）**：
 
-定义建议（择一，论文里写清即可）：
-
-- **方案 A（推荐）**：一次调用生成结构化输出（相当于一次 `submit_node_turn` 的内容），允许触发**一次**校验与**一次**stub（但不允许循环自修复）。
-- **方案 B**：允许 tools 但限制 `max_steps=1`（只允许 1 次 tool 规划/执行）。
-
-### W4：三层 Agent 循环（3-stage Pipeline）
-
-由于“3 层”不是通用术语，建议将其固化为 **Plan → Implement → Verify** 三阶段，每阶段最多 1 轮（或最多 2 轮）：
-
-- **Plan**：产出结构（端口/类名/描述/颜色/主 widget 选择）。
-- **Implement**：产出 `core_logic`。
-- **Verify**：运行 `validate_core_logic` + `run_stub_test`，失败则允许回到 Implement，但**总循环次数固定上限**（例如最多 3 次）。
-
-### W5：ReAct 架构循环（Tool loop）
-
-直接对应仓库实现（`run_react_session`）：
-
-- **允许**：多步工具调用（read/write/apply_patch/validate/stub/可选 shell）。
-- **终止**：成功提交 `submit_node_turn` 且通过 schema + 校验；或达到 `max_steps`。
-- **产物**：返回包含 `react_trace`、`repair_round`，并可从 JSONL session log 复盘。
+- W1/W2 的“产物路径”必须与 W3–W6 **语义等价**（同一任务同一验收），仅允许编辑方式不同。  
+- W3–W6 的 Generator 部分应包含 **保存 `nodes.py`/`gui.py`**（或等价 workspace 导出），不能只停留在 UI 预览。  
+- W6 的日志与 `react_trace` 作为诊断指标（D1–D2）的主要来源。
 
 ---
 
@@ -158,7 +145,7 @@
 - 从“开始计时”到满足 **demo 判定**（A1 + A2）的时间，单位分钟。
 - demo 判定：`validate_core_logic` 通过 + demo stub 用例 `all_passed=True`。
 
-> 备注：如果 W1/W2 不走生成器的 stub 工具，可用同一套 python stub runner（后续可写一个统一评测脚本）保证判定一致。
+> 备注：若 W1/W2/W3 在协议中未接入生成器侧 stub 工具，仍应对所有条件使用**同一套**离线 stub runner 判定 A2/A3，保证口径一致。
 
 #### M2：即时正确率（Instant Demo Correctness）
 
@@ -206,7 +193,8 @@
 建议列（与你现有绘图脚本字段兼容/可拓展）：
 
 - `task_id`
-- `workflow`：W1–W5 key
+- `workflow`：`W1_hand_only` … `W6_gen_react`（见 §3）
+- `uses_generator`：0/1（与 §3 表一致；可由 `workflow` 派生）
 - `run_id`：重复编号
 - `operator`：操作者（若多人）
 - `start_ts`, `end_ts`
@@ -227,7 +215,7 @@
 - `artifacts/<date>/<workflow>/<task_id>/<run_id>/`
   - `nodes_config.json`（或生成器 workspace）
   - `generated/nodes.py`、`generated/gui.py`
-  - `react_session.jsonl`（若 W5）
+  - `react_session.jsonl`（若 W6）
   - `notes.md`（记录人为修复点）
 
 ---
@@ -248,10 +236,11 @@
 
 ### 7.2 图表（建议最少 4 张就能讲清楚）
 
-1. **箱线+散点**：五工作流的 `time_to_demo` 分布（对应 M1）。
-2. **成功率条形图**：五工作流的 `instant_demo_ok`（对应 M2）。
-3. **time_to_robust 分布**：五工作流的最终时间（对应 M3）。
-4. **ReAct 诊断图**（只对 W5）：`llm_rounds × time_to_demo` 气泡大小=tool_calls（解释代价与稳定性）。
+1. **箱线+散点**：六工作流的 `time_to_demo` 分布（对应 M1）。
+2. **成功率条形图**：六工作流的 `instant_demo_ok`（对应 M2）。
+3. **time_to_robust 分布**：六工作流的最终时间（对应 M3）。
+4. **ReAct 诊断图**（只对 W6）：`llm_rounds × time_to_demo` 气泡大小=tool_calls（解释代价与稳定性）。
+5. **（可选）Generator 因子图**：按 `uses_generator` 聚合或分面，突出 W2 vs W3、W1 vs 带生成器条件。
 
 可选增强：
 
@@ -264,7 +253,7 @@
 
 ### 8.1 学习效应与顺序效应
 
-- 同一操作者做 5 个工作流会越来越熟：建议用**拉丁方**随机化顺序，或不同工作流分配不同操作者（至少 2 人）。
+- 同一操作者做 6 个工作流会越来越熟：建议用**拉丁方**随机化顺序，或不同工作流分配不同操作者（至少 2 人）。
 
 ### 8.2 任务难度偏差
 
@@ -286,16 +275,16 @@
 
 ### 9.1 最小可行（建议先做，最快产出论文图）
 
-- 只评 **W1（手写） vs W3（单层 Agent） vs W5（ReAct）** 三组。
+- 只评 **W1_hand_only vs W3_gen_chat vs W6_gen_react** 三组（覆盖：无工具 / 生成器+聊 / 生成器+闭环）。
 - 指标只做 M1 + M2（time_to_demo + instant_demo_ok）。
 - N=20，重复 K=1（先跑通流程），再把关键任务做 K=3 增强稳定性。
 
-### 9.2 完整版（你的目标：五工作流 + 三主指标）
+### 9.2 完整版（六工作流 + 三主指标）
 
-- 五组都做：W1–W5
+- 六组都做：W1_hand_only–W6_gen_react
 - 每个 task 至少 K=2（AI 条件建议 K=3）
 - 三主指标 M1/M2/M3 都算
-- W5 额外产出 D1–D4 诊断图
+- W6 额外产出 D1–D4 诊断图
 
 ---
 
@@ -304,8 +293,9 @@
 你最终应能写出类似下面的结论段（示例结构，不填数字）：
 
 - **效率**：与纯手写相比，生成器模板工作流将 `time_to_demo` 的中位数从 \(T_\text{manual}\) 降至 \(T_\text{gen}\)，相当于 **\(S\)× 加速**；ReAct 在平均时间上略高于单层，但显著提升成功率。
-- **即时正确率**：在 20 个任务中，W5 的 `instant_demo_ok` 达到 \(p\%\)，高于 W2/W3；失败主要来自（列出 top2 原因：语法/输出不匹配/导入错误）。
-- **最终鲁棒**：在 robust 用例集上，W5 的 `time_to_robust` 更稳定（IQR 更小），且日志显示其通过 `validate_core_logic_tool` 与 `run_stub_test` 的反馈循环减少了返工。
+- **即时正确率**：在 20 个任务中，W6 的 `instant_demo_ok` 达到 \(p\%\)，高于 W3/W4/W5 等弱闭环条件；失败主要来自（列出 top2 原因：语法/输出不匹配/导入错误）。
+- **最终鲁棒**：在 robust 用例集上，W6 的 `time_to_robust` 更稳定（IQR 更小），且日志显示其通过 `validate_core_logic_tool` 与 `run_stub_test` 的反馈循环减少了返工。
+- **生成器便捷性**：对比 **W2_hand_chat vs W3_gen_chat**（同用纯聊、差在是否先用 Generator），报告 M1/M2 的相对提升。
 
 ---
 
@@ -318,4 +308,34 @@
 - stub 自测：`ryven_node_generator/ai_assistant/core/stub_runner.py`
 - ReAct 循环：`ryven_node_generator/ai_assistant/orchestration/react_loop.py`
 - JSONL 日志：`ryven_node_generator/ai_assistant/session_file_log.py`
+
+---
+
+## 12. 蒙特卡洛模拟数据（无实测时的论文占位）
+
+当无法完成完整用户实验时，可用 **脚本生成的模拟 trial 表** 保持图表与叙事结构一致；**必须在论文中明确标注为 simulation**，并附上 `simulation_manifest.json` 中的参数版本。
+
+- **生成**：`scripts/evaluation/generate_strategy_trials.py`  
+  - 潜变量：每条 trial 的 `latent_hardness ~ Beta`、操作者微扰、可选环境噪声。  
+  - 时间：**对数正态** wall-clock；ReAct 锚点按难度 L1/L2/L3 分别约 **1 / 2 / 3 分钟** 中位；手写 **L1 不低于约 10 分钟** 并随难度放大。  
+  - 正确率：**logistic** 模型，`instant_demo_ok` 与 `final_robust_ok` 条件于难度与是否首过；**W6（Generator+ReAct）** 在 pass@1 与最终鲁棒上参数最强；**W3（Generator+聊）** 相对 **W2（手写+聊）** 体现样板节省时间。  
+  - 输出：`data/strategy_trials_simulated.csv` + `data/simulation_manifest.json`（含 `schema_version: sim_v3` 与汇总统计）；CSV 含列 **`uses_generator`**。
+
+- **出图**（与 CSV 解耦）：`scripts/evaluation/plot_strategy_results.py`  
+  - 默认读取 `data/strategy_trials_simulated.csv`；`--html-only` 可跳过 Kaleido 静态导出。  
+
+- **共享常量**：`scripts/evaluation/strategy_constants.py`（工作流顺序、配色、标签）。
+
+---
+
+## 13. 叙事要点：Generator 便捷性 + ReAct（W6）相对优势
+
+在统一判定 **A1（校验）+ A2（demo stub）+ A3（robust stub）** 下，论文可强调：
+
+1. **生成器便捷性（因子 A）**：在**同样使用纯 LLM 聊天**时，**W3_gen_chat** 相对 **W2_hand_chat** 的 **M1** 更短、**M2** 往往更高（样板与端口结构由模板保证，减少低级结构错误）。  
+2. **效率（端到端）**：**W6** 相对 **W1_hand_only / W2**，**M1/M3 中位数**显著更低（模板 + 工具闭环减少样板与返工）。  
+3. **即时正确率（M2）**：**W6** 的 **pass@1** 高于 **W3–W5**（工具反馈降低“一次提交即错”的概率）。  
+4. **最终鲁棒**：**W6** 的 **final 成功率**与 **time_to_robust**（成功子集）优于弱闭环条件；诊断图用 **llm_rounds / tool_calls** 解释成本来源。
+
+与 **W5_gen_3stage** 的对比建议写成：**W5 可能在部分任务上 demo 略快**（固定阶段、轮次少），但 **W6 在扩展用例与失败恢复上更稳**；**实测时**应以同一 `robust_cases` 验证。
 

@@ -1,0 +1,361 @@
+﻿task_id,task_band,workflow,workflow_label,run_id,operator,time_to_demo_min,instant_demo_ok,time_to_robust_min,final_robust_ok,validation_on,uses_generator,loop_mode,llm_rounds,tool_calls,errors_top,latent_hardness,sim_schema,notes
+N01,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_A,26.61,0,34.36,1,0,0,none,0,0,none,0.6016,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_B,30.22,0,42.76,1,0,0,none,0,0,none,0.3181,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_B,16.41,1,24.36,1,0,0,none,0,0,none,0.5868,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_B,21.41,1,31.36,1,0,0,none,0,0,none,0.0504,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_A,16.03,1,26.3,1,0,0,none,0,0,none,0.6921,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_A,16.08,1,19.87,1,0,0,none,0,0,none,0.5614,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_B,33.57,0,48.52,1,0,0,none,0,0,none,0.6395,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_A,15.69,0,23.67,1,0,0,none,0,0,none,0.4855,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_A,17.07,1,26.58,1,0,0,none,0,0,none,0.8621,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_B,39.12,0,,0,0,0,none,0,0,off_by_one_ports,0.9143,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_A,9.66,1,12.23,1,0,0,none,0,0,none,0.4368,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_A,16.33,1,,0,0,0,none,0,0,none,0.5642,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_B,13.31,1,18.15,1,0,0,none,0,0,none,0.7359,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_A,12.11,1,19.5,1,0,0,none,0,0,none,0.526,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_B,35.46,0,54.94,1,0,0,none,0,0,none,0.4753,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_B,10.85,1,14.41,1,0,0,none,0,0,none,0.1196,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_A,9.02,1,20.54,1,0,0,none,0,0,none,0.6437,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_A,37.85,0,,0,0,0,none,0,0,syntax_error,0.5737,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_B,22.6,1,27.49,1,0,0,none,0,0,none,0.3641,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_A,43.89,0,,0,0,0,none,0,0,off_by_one_ports,0.4575,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_B,10.42,1,12.72,1,0,0,none,0,0,none,0.5719,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_A,9.13,1,15.68,1,0,0,none,0,0,none,0.147,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_B,10.9,1,28.62,1,0,0,none,0,0,none,0.5779,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_B,17.74,1,23.68,1,0,0,none,0,0,none,0.6295,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_B,42.81,0,52.58,1,0,0,none,0,0,none,0.7245,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_A,34.46,0,,0,0,0,none,0,0,validation_error,0.4581,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_A,44.38,0,50.91,1,0,0,none,0,0,none,0.5271,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_A,18.15,1,23.68,1,0,0,none,0,0,none,0.6021,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_A,29.84,0,,0,0,0,none,0,0,syntax_error,0.4757,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_B,18.44,1,23.94,1,0,0,none,0,0,none,0.3227,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_A,20.53,1,,0,0,0,none,0,0,none,0.4401,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_B,32.74,0,,0,0,0,none,0,0,validation_error,0.9069,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_A,37.92,1,41.85,1,0,0,none,0,0,none,0.5213,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_B,45.76,0,,0,0,0,none,0,0,syntax_error,0.7182,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_A,57.35,0,68.2,1,0,0,none,0,0,none,0.7505,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_B,26.9,1,39.16,1,0,0,none,0,0,none,0.6735,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_B,20.95,1,31.13,1,0,0,none,0,0,none,0.7891,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_B,23.87,1,28.21,1,0,0,none,0,0,none,0.4124,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_B,30.54,1,34.89,1,0,0,none,0,0,none,0.2366,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_A,19.87,1,26.21,1,0,0,none,0,0,none,0.3632,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_B,29.98,1,,0,0,0,none,0,0,none,0.5351,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_B,20.24,1,26.93,1,0,0,none,0,0,none,0.2615,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_B,21.8,1,27.09,1,0,0,none,0,0,none,0.214,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_B,29.58,1,37.6,1,0,0,none,0,0,none,0.9294,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_B,36.63,0,45.23,1,0,0,none,0,0,none,0.5779,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_B,50.87,1,54.63,1,0,0,none,0,0,none,0.4641,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_A,39.42,0,58.92,1,0,0,none,0,0,none,0.351,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_B,36.69,1,40.67,1,0,0,none,0,0,none,0.2154,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_B,36.81,1,45.9,1,0,0,none,0,0,none,0.4884,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_A,53.04,1,58.73,1,0,0,none,0,0,none,0.5508,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_A,30.92,1,33.15,1,0,0,none,0,0,none,0.575,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_B,68.02,0,77.3,1,0,0,none,0,0,none,0.5022,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_B,62.49,0,73.44,1,0,0,none,0,0,none,0.6351,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_A,40.83,0,,0,0,0,none,0,0,stub_mismatch,0.2675,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_A,56.12,0,76.5,1,0,0,none,0,0,none,0.7006,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_A,58.74,0,,0,0,0,none,0,0,off_by_one_ports,0.6984,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_A,51.78,1,55.74,1,0,0,none,0,0,none,0.5017,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W1_hand_only,W1 Direct edit nodes/gui (no LLM),1,operator_B,85.42,1,92.0,1,0,0,none,0,0,none,0.7018,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W1_hand_only,W1 Direct edit nodes/gui (no LLM),2,operator_A,45.76,0,,0,0,0,none,0,0,syntax_error,0.4367,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W1_hand_only,W1 Direct edit nodes/gui (no LLM),3,operator_A,94.86,1,103.9,1,0,0,none,0,0,none,0.7692,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_B,17.37,0,,0,0,0,none,0,0,validation_error,0.5023,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_A,16.04,0,22.68,1,0,0,none,0,0,none,0.6233,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_B,16.66,0,,0,0,0,none,0,0,stub_mismatch,0.4118,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_A,10.94,0,19.1,1,0,0,none,0,0,none,0.4305,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_B,2.96,1,5.83,1,0,0,none,0,0,none,0.044,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_A,16.93,0,,0,0,0,none,0,0,syntax_error,0.3421,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_B,9.83,1,19.62,1,0,0,none,0,0,none,0.8502,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_A,4.84,1,7.49,1,0,0,none,0,0,none,0.2504,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_B,7.19,1,,0,0,0,none,0,0,none,0.4166,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_A,7.66,1,11.18,1,0,0,none,0,0,none,0.5648,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_B,6.67,1,,0,0,0,none,0,0,none,0.7057,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_A,6.0,1,12.0,1,0,0,none,0,0,none,0.747,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_B,6.09,1,11.16,1,0,0,none,0,0,none,0.54,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_A,12.84,0,23.9,1,0,0,none,0,0,none,0.8297,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_B,14.78,0,21.01,1,0,0,none,0,0,none,0.4508,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_A,26.51,0,34.65,1,0,0,none,0,0,none,0.5525,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_A,5.92,1,14.02,1,0,0,none,0,0,none,0.3178,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_B,16.05,0,30.51,1,0,0,none,0,0,none,0.5305,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_A,6.27,1,10.83,1,0,0,none,0,0,none,0.3514,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_B,14.58,0,,0,0,0,none,0,0,syntax_error,0.5013,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_A,10.55,1,12.39,1,0,0,none,0,0,none,0.472,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_B,5.35,1,9.08,1,0,0,none,0,0,none,0.7837,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_B,14.53,0,27.02,1,0,0,none,0,0,none,0.8192,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_A,9.57,0,20.63,1,0,0,none,0,0,none,0.4084,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_A,13.14,1,17.19,1,0,0,none,0,0,none,0.5801,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_B,21.64,0,29.21,1,0,0,none,0,0,none,0.7797,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_A,22.74,0,,0,0,0,none,0,0,validation_error,0.6897,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_A,19.69,0,,0,0,0,none,0,0,syntax_error,0.3801,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_B,15.91,0,,0,0,0,none,0,0,off_by_one_ports,0.7448,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_B,11.96,0,,0,0,0,none,0,0,off_by_one_ports,0.2362,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_A,21.06,0,,0,0,0,none,0,0,syntax_error,0.646,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_B,15.55,1,18.14,1,0,0,none,0,0,none,0.5905,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_A,11.31,1,,0,0,0,none,0,0,none,0.4444,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_B,6.86,1,10.11,1,0,0,none,0,0,none,0.5198,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_A,17.87,0,25.17,1,0,0,none,0,0,none,0.076,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_A,14.72,0,,0,0,0,none,0,0,stub_mismatch,0.56,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_A,11.45,1,20.31,1,0,0,none,0,0,none,0.4112,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_A,18.32,0,,0,0,0,none,0,0,stub_mismatch,0.609,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_A,36.55,0,,0,0,0,none,0,0,syntax_error,0.7972,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_B,25.69,0,,0,0,0,none,0,0,validation_error,0.8146,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_A,15.33,0,23.37,1,0,0,none,0,0,none,0.1205,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_A,19.43,0,29.96,1,0,0,none,0,0,none,0.6308,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_A,9.12,1,,0,0,0,none,0,0,none,0.2756,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_A,13.34,1,,0,0,0,none,0,0,none,0.4344,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_A,23.81,0,,0,0,0,none,0,0,off_by_one_ports,0.6925,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_A,9.19,1,,0,0,0,none,0,0,none,0.0711,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_B,21.69,0,34.67,1,0,0,none,0,0,none,0.3204,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_B,6.59,1,13.24,1,0,0,none,0,0,none,0.2034,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_A,15.68,0,,0,0,0,none,0,0,off_by_one_ports,0.9,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_A,11.35,1,15.66,1,0,0,none,0,0,none,0.492,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_A,10.15,1,16.29,1,0,0,none,0,0,none,0.2088,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_B,23.47,1,29.7,1,0,0,none,0,0,none,0.7922,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_B,18.14,1,,0,0,0,none,0,0,none,0.5186,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_A,20.89,1,24.3,1,0,0,none,0,0,none,0.6307,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_A,26.99,0,41.8,1,0,0,none,0,0,none,0.4971,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_A,23.42,0,32.67,1,0,0,none,0,0,none,0.5711,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_A,22.52,0,40.78,1,0,0,none,0,0,none,0.6068,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W2_hand_chat,W2 Direct edit + plain LLM chat,1,operator_B,21.5,0,,0,0,0,none,0,0,syntax_error,0.4696,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W2_hand_chat,W2 Direct edit + plain LLM chat,2,operator_B,13.9,1,21.34,1,0,0,none,0,0,none,0.5125,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W2_hand_chat,W2 Direct edit + plain LLM chat,3,operator_A,32.69,0,,0,0,0,none,0,0,validation_error,0.877,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_A,3.04,1,6.2,1,0,1,none,0,0,none,0.3475,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_A,9.48,0,13.63,1,0,1,none,0,0,none,0.3846,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_A,2.17,1,4.77,1,0,1,none,0,0,none,0.1406,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_A,9.6,0,,0,0,1,none,0,0,syntax_error,0.2944,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_A,2.74,1,6.12,1,0,1,none,0,0,none,0.3578,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_B,4.23,1,10.65,1,0,1,none,0,0,none,0.8122,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_A,8.22,0,17.12,1,0,1,none,0,0,none,0.6168,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_B,5.58,0,11.03,1,0,1,none,0,0,none,0.3418,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_B,14.19,0,27.5,1,0,1,none,0,0,none,0.4788,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_A,2.72,1,7.4,1,0,1,none,0,0,none,0.0855,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_B,2.59,1,5.94,1,0,1,none,0,0,none,0.2244,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_B,6.55,0,15.85,1,0,1,none,0,0,none,0.1325,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_B,2.35,1,4.99,1,0,1,none,0,0,none,0.6077,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_A,2.83,1,7.07,1,0,1,none,0,0,none,0.5172,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_A,13.65,0,,0,0,1,none,0,0,syntax_error,0.5596,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_B,5.08,0,12.11,1,0,1,none,0,0,none,0.4949,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_A,9.89,0,,0,0,1,none,0,0,off_by_one_ports,0.362,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_A,1.4,1,6.03,1,0,1,none,0,0,none,0.3852,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_B,5.28,0,11.05,1,0,1,none,0,0,none,0.417,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_A,7.34,0,,0,0,1,none,0,0,stub_mismatch,0.5505,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_B,1.65,1,4.2,1,0,1,none,0,0,none,0.3333,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_A,10.59,0,,0,0,1,none,0,0,validation_error,0.4886,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_B,9.22,0,16.48,1,0,1,none,0,0,none,0.5416,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_B,1.29,1,4.62,1,0,1,none,0,0,none,0.1825,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_B,3.98,1,,0,0,1,none,0,0,none,0.8615,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_B,13.64,0,,0,0,1,none,0,0,syntax_error,0.748,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_B,4.21,1,7.28,1,0,1,none,0,0,none,0.1725,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_B,10.96,0,,0,0,1,none,0,0,off_by_one_ports,0.6047,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_B,7.65,0,13.41,1,0,1,none,0,0,none,0.4459,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_B,6.14,1,7.24,1,0,1,none,0,0,none,0.6658,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_B,4.04,1,6.9,1,0,1,none,0,0,none,0.0714,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_B,4.75,1,8.43,1,0,1,none,0,0,none,0.6694,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_B,15.2,0,20.38,1,0,1,none,0,0,none,0.6483,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_B,5.59,1,7.34,1,0,1,none,0,0,none,0.5125,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_B,7.82,0,12.08,1,0,1,none,0,0,none,0.4607,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_B,14.15,0,23.8,1,0,1,none,0,0,none,0.8918,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_A,4.04,1,5.5,1,0,1,none,0,0,none,0.4669,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_A,5.34,1,,0,0,1,none,0,0,none,0.2524,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_A,8.41,0,13.36,1,0,1,none,0,0,none,0.5039,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_B,3.23,1,5.29,1,0,1,none,0,0,none,0.1478,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_A,14.06,0,20.85,1,0,1,none,0,0,none,0.1534,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_B,6.76,1,13.08,1,0,1,none,0,0,none,0.6585,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_B,5.6,1,7.88,1,0,1,none,0,0,none,0.4202,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_B,9.51,0,14.34,1,0,1,none,0,0,none,0.4753,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_B,17.61,0,21.18,1,0,1,none,0,0,none,0.7542,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_B,9.18,1,12.21,1,0,1,none,0,0,none,0.5356,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_B,5.88,1,13.31,1,0,1,none,0,0,none,0.3717,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_A,12.57,0,,0,0,1,none,0,0,syntax_error,0.5888,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_B,5.34,1,7.27,1,0,1,none,0,0,none,0.589,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_A,6.5,1,8.55,1,0,1,none,0,0,none,0.2803,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_B,14.28,0,,0,0,1,none,0,0,validation_error,0.7731,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_A,11.13,1,13.81,1,0,1,none,0,0,none,0.5605,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_A,5.97,1,9.18,1,0,1,none,0,0,none,0.6059,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_B,12.68,1,16.88,1,0,1,none,0,0,none,0.5386,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_B,18.58,0,,0,0,1,none,0,0,syntax_error,0.6704,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_B,5.66,1,11.39,1,0,1,none,0,0,none,0.8769,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_B,11.77,0,15.79,1,0,1,none,0,0,none,0.3612,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W3_gen_chat,W3 Generator + plain LLM chat,1,operator_A,9.65,1,11.95,1,0,1,none,0,0,none,0.5646,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W3_gen_chat,W3 Generator + plain LLM chat,2,operator_B,33.66,0,40.09,1,0,1,none,0,0,none,0.598,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W3_gen_chat,W3 Generator + plain LLM chat,3,operator_A,10.48,0,14.73,1,0,1,none,0,0,none,0.8229,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W4_gen_single,W4 Generator + single-turn agent,1,operator_B,4.8,0,8.32,1,1,1,single,1,6,none,0.325,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W4_gen_single,W4 Generator + single-turn agent,2,operator_A,1.03,1,3.11,1,1,1,single,1,7,none,0.275,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W4_gen_single,W4 Generator + single-turn agent,3,operator_A,1.24,1,3.12,1,1,1,single,1,7,none,0.7284,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W4_gen_single,W4 Generator + single-turn agent,1,operator_B,1.82,1,4.61,1,1,1,single,1,8,none,0.5748,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W4_gen_single,W4 Generator + single-turn agent,2,operator_B,2.45,1,6.34,1,1,1,single,1,6,none,0.3633,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W4_gen_single,W4 Generator + single-turn agent,3,operator_B,3.38,0,6.17,1,1,1,single,1,6,none,0.1428,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W4_gen_single,W4 Generator + single-turn agent,1,operator_B,0.83,1,3.63,1,1,1,single,1,4,none,0.3281,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W4_gen_single,W4 Generator + single-turn agent,2,operator_A,5.5,0,8.73,1,1,1,single,1,2,none,0.3281,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W4_gen_single,W4 Generator + single-turn agent,3,operator_B,1.74,1,2.86,1,1,1,single,1,3,none,0.4661,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W4_gen_single,W4 Generator + single-turn agent,1,operator_B,4.57,0,8.84,1,1,1,single,1,7,none,0.779,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W4_gen_single,W4 Generator + single-turn agent,2,operator_B,1.39,1,4.11,1,1,1,single,1,5,none,0.4231,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W4_gen_single,W4 Generator + single-turn agent,3,operator_A,1.21,1,4.47,1,1,1,single,1,5,none,0.8523,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W4_gen_single,W4 Generator + single-turn agent,1,operator_B,1.7,1,3.85,1,1,1,single,1,3,none,0.1628,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W4_gen_single,W4 Generator + single-turn agent,2,operator_A,6.23,0,11.61,1,1,1,single,1,6,none,0.1551,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W4_gen_single,W4 Generator + single-turn agent,3,operator_A,1.08,1,2.66,1,1,1,single,1,7,none,0.5152,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W4_gen_single,W4 Generator + single-turn agent,1,operator_A,5.19,0,9.96,1,1,1,single,1,6,none,0.6318,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W4_gen_single,W4 Generator + single-turn agent,2,operator_A,1.76,1,,0,1,1,single,1,8,none,0.8515,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W4_gen_single,W4 Generator + single-turn agent,3,operator_B,5.94,0,,0,1,1,single,1,8,validation_error,0.6705,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W4_gen_single,W4 Generator + single-turn agent,1,operator_B,1.05,1,2.42,1,1,1,single,1,8,none,0.2657,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W4_gen_single,W4 Generator + single-turn agent,2,operator_A,1.42,1,,0,1,1,single,1,8,none,0.6161,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W4_gen_single,W4 Generator + single-turn agent,3,operator_A,0.31,1,,0,1,1,single,1,5,none,0.6107,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W4_gen_single,W4 Generator + single-turn agent,1,operator_A,2.89,0,6.11,1,1,1,single,1,5,none,0.1481,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W4_gen_single,W4 Generator + single-turn agent,2,operator_A,8.11,0,,0,1,1,single,1,8,validation_error,0.8777,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W4_gen_single,W4 Generator + single-turn agent,3,operator_A,5.4,0,9.61,1,1,1,single,1,2,none,0.4954,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W4_gen_single,W4 Generator + single-turn agent,1,operator_A,3.27,1,6.47,1,1,1,single,1,7,none,0.6163,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W4_gen_single,W4 Generator + single-turn agent,2,operator_A,2.92,1,7.71,1,1,1,single,1,6,none,0.4421,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W4_gen_single,W4 Generator + single-turn agent,3,operator_B,2.92,1,5.57,1,1,1,single,1,3,none,0.5975,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W4_gen_single,W4 Generator + single-turn agent,1,operator_A,2.72,1,3.85,1,1,1,single,1,5,none,0.228,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W4_gen_single,W4 Generator + single-turn agent,2,operator_B,5.48,1,,0,1,1,single,1,7,none,0.744,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W4_gen_single,W4 Generator + single-turn agent,3,operator_A,2.8,1,5.36,1,1,1,single,1,7,none,0.2888,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W4_gen_single,W4 Generator + single-turn agent,1,operator_B,11.82,0,,0,1,1,single,1,4,validation_error,0.5162,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W4_gen_single,W4 Generator + single-turn agent,2,operator_A,2.98,1,,0,1,1,single,1,5,none,0.3198,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W4_gen_single,W4 Generator + single-turn agent,3,operator_A,2.66,1,3.95,1,1,1,single,1,2,none,0.5362,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W4_gen_single,W4 Generator + single-turn agent,1,operator_A,2.53,1,,0,1,1,single,1,7,none,0.099,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W4_gen_single,W4 Generator + single-turn agent,2,operator_A,3.07,1,5.63,1,1,1,single,1,5,none,0.1646,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W4_gen_single,W4 Generator + single-turn agent,3,operator_A,3.26,1,5.17,1,1,1,single,1,2,none,0.3509,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W4_gen_single,W4 Generator + single-turn agent,1,operator_B,1.87,1,6.67,1,1,1,single,1,3,none,0.5201,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W4_gen_single,W4 Generator + single-turn agent,2,operator_A,12.17,0,,0,1,1,single,1,4,validation_error,0.6618,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W4_gen_single,W4 Generator + single-turn agent,3,operator_A,2.19,1,3.1,1,1,1,single,1,7,none,0.1724,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W4_gen_single,W4 Generator + single-turn agent,1,operator_B,2.29,1,4.51,1,1,1,single,1,8,none,0.6443,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W4_gen_single,W4 Generator + single-turn agent,2,operator_A,3.38,1,6.46,1,1,1,single,1,4,none,0.5504,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W4_gen_single,W4 Generator + single-turn agent,3,operator_A,2.52,1,6.62,1,1,1,single,1,3,none,0.2192,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W4_gen_single,W4 Generator + single-turn agent,1,operator_B,4.09,0,9.14,1,1,1,single,1,8,none,0.5617,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W4_gen_single,W4 Generator + single-turn agent,2,operator_B,2.81,1,5.88,1,1,1,single,1,4,none,0.0773,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W4_gen_single,W4 Generator + single-turn agent,3,operator_B,3.28,1,4.76,1,1,1,single,1,7,none,0.2632,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W4_gen_single,W4 Generator + single-turn agent,1,operator_A,5.32,0,8.74,1,1,1,single,1,3,none,0.9173,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W4_gen_single,W4 Generator + single-turn agent,2,operator_A,2.61,1,5.73,1,1,1,single,1,2,none,0.3583,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W4_gen_single,W4 Generator + single-turn agent,3,operator_A,3.44,1,6.27,1,1,1,single,1,2,none,0.5701,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W4_gen_single,W4 Generator + single-turn agent,1,operator_A,7.27,0,11.66,1,1,1,single,1,3,none,0.4658,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W4_gen_single,W4 Generator + single-turn agent,2,operator_B,4.34,1,6.77,1,1,1,single,1,5,none,0.4916,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W4_gen_single,W4 Generator + single-turn agent,3,operator_B,2.49,1,,0,1,1,single,1,4,none,0.8442,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W4_gen_single,W4 Generator + single-turn agent,1,operator_B,6.36,0,13.29,1,1,1,single,1,8,none,0.8658,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W4_gen_single,W4 Generator + single-turn agent,2,operator_B,6.85,0,11.53,1,1,1,single,1,7,none,0.4493,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W4_gen_single,W4 Generator + single-turn agent,3,operator_A,4.18,1,5.09,1,1,1,single,1,2,none,0.1775,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W4_gen_single,W4 Generator + single-turn agent,1,operator_B,7.9,0,13.61,1,1,1,single,1,6,none,0.6256,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W4_gen_single,W4 Generator + single-turn agent,2,operator_B,5.22,1,7.58,1,1,1,single,1,8,none,0.2824,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W4_gen_single,W4 Generator + single-turn agent,3,operator_B,4.24,1,5.91,1,1,1,single,1,4,none,0.4745,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W4_gen_single,W4 Generator + single-turn agent,1,operator_B,8.85,0,12.44,1,1,1,single,1,5,none,0.4007,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W4_gen_single,W4 Generator + single-turn agent,2,operator_A,3.62,1,5.54,1,1,1,single,1,7,none,0.548,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W4_gen_single,W4 Generator + single-turn agent,3,operator_B,1.54,1,,0,1,1,single,1,5,none,0.5137,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_A,3.81,0,6.25,1,1,1,3stage,3,16,none,0.5189,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_B,1.03,1,,0,1,1,3stage,3,16,none,0.4782,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_A,0.66,1,3.39,1,1,1,3stage,3,14,none,0.7937,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_B,1.11,1,3.07,1,1,1,3stage,3,9,none,0.5363,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_B,2.86,0,4.58,1,1,1,3stage,3,8,none,0.3092,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_B,1.44,0,3.14,1,1,1,3stage,3,13,none,0.2193,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_A,0.88,1,1.59,1,1,1,3stage,3,9,none,0.3684,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_B,0.97,1,1.73,1,1,1,3stage,3,8,none,0.4576,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_B,3.99,0,6.82,1,1,1,3stage,3,10,none,0.7946,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_A,5.02,0,,0,1,1,3stage,3,13,off_by_one_ports,0.9126,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_A,1.1,1,2.05,1,1,1,3stage,3,9,none,0.8142,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_B,2.36,0,5.71,1,1,1,3stage,3,9,none,0.5948,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_B,0.89,1,2.07,1,1,1,3stage,3,8,none,0.341,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_B,3.71,0,8.13,1,1,1,3stage,3,12,none,0.6351,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_B,0.99,1,1.92,1,1,1,3stage,3,9,none,0.117,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_A,4.53,0,6.2,1,1,1,3stage,3,12,none,0.8081,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_A,0.68,1,,0,1,1,3stage,3,16,none,0.5196,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_A,1.21,1,3.16,1,1,1,3stage,3,8,none,0.8071,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_B,1.22,1,3.56,1,1,1,3stage,3,14,none,0.5096,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_A,1.07,1,2.1,1,1,1,3stage,3,13,none,0.4091,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_A,2.16,0,4.29,1,1,1,3stage,3,10,none,0.3268,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_B,1.42,1,2.75,1,1,1,3stage,3,15,none,0.6339,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_B,0.84,1,3.12,1,1,1,3stage,3,14,none,0.4278,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_A,1.09,1,,0,1,1,3stage,3,15,none,0.5895,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_A,5.04,0,7.9,1,1,1,3stage,3,16,none,0.6893,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_A,5.22,0,8.19,1,1,1,3stage,3,16,none,0.4706,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_B,2.67,1,4.41,1,1,1,3stage,3,8,none,0.8223,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_B,2.5,1,4.8,1,1,1,3stage,3,13,none,0.7336,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_A,3.86,1,4.43,1,1,1,3stage,3,8,none,0.1973,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_B,2.59,1,4.04,1,1,1,3stage,3,9,none,0.4365,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_A,4.77,0,6.2,1,1,1,3stage,3,13,none,0.137,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_B,3.18,1,5.42,1,1,1,3stage,3,15,none,0.4951,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_A,5.48,0,,0,1,1,3stage,3,11,stub_mismatch,0.598,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_A,2.04,1,3.69,1,1,1,3stage,3,15,none,0.2056,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_A,1.37,1,2.32,1,1,1,3stage,3,9,none,0.1472,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_A,1.93,1,6.11,1,1,1,3stage,3,13,none,0.8722,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_B,5.15,0,8.02,1,1,1,3stage,3,9,none,0.8254,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_A,2.43,1,4.32,1,1,1,3stage,3,13,none,0.6864,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_A,3.9,0,6.62,1,1,1,3stage,3,16,none,0.8416,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_A,2.14,1,3.38,1,1,1,3stage,3,9,none,0.4613,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_B,1.25,1,2.44,1,1,1,3stage,3,13,none,0.6637,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_A,2.07,1,3.49,1,1,1,3stage,3,11,none,0.827,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_A,2.4,1,5.06,1,1,1,3stage,3,16,none,0.5614,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_A,1.55,1,3.18,1,1,1,3stage,3,16,none,0.766,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_B,5.47,0,8.32,1,1,1,3stage,3,11,none,0.8171,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_A,3.25,1,,0,1,1,3stage,3,13,none,0.822,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_B,2.13,1,3.31,1,1,1,3stage,3,12,none,0.2939,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_B,2.59,1,4.61,1,1,1,3stage,3,11,none,0.6505,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_B,4.73,0,,0,1,1,3stage,3,15,validation_error,0.575,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_A,2.59,1,4.59,1,1,1,3stage,3,13,none,0.3293,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_A,5.02,0,9.98,1,1,1,3stage,3,9,none,0.4209,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_B,2.62,1,3.93,1,1,1,3stage,3,8,none,0.0376,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_B,3.04,1,4.52,1,1,1,3stage,3,15,none,0.2963,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_A,4.02,1,5.55,1,1,1,3stage,3,15,none,0.217,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_B,3.2,1,4.83,1,1,1,3stage,3,12,none,0.4749,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_B,3.86,1,5.53,1,1,1,3stage,3,14,none,0.8344,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_B,2.76,1,,0,1,1,3stage,3,14,none,0.4849,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,operator_A,2.16,1,3.1,1,1,1,3stage,3,8,none,0.1446,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W5_gen_3stage,W5 Generator + 3-stage pipeline,2,operator_A,3.26,1,4.89,1,1,1,3stage,3,11,none,0.5691,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W5_gen_3stage,W5 Generator + 3-stage pipeline,3,operator_B,3.81,1,5.92,1,1,1,3stage,3,16,none,0.6594,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_A,0.8,1,1.82,1,1,1,react,2,10,none,0.1995,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_B,1.47,1,2.24,1,1,1,react,7,13,none,0.803,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N01,L1,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_B,0.46,1,1.02,1,1,1,react,7,20,none,0.2243,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_A,1.46,1,2.3,1,1,1,react,8,24,none,0.5166,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_B,1.32,1,1.83,1,1,1,react,7,28,none,0.7536,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N02,L1,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_B,1.12,1,1.65,1,1,1,react,4,19,none,0.281,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_A,1.96,1,2.76,1,1,1,react,6,27,none,0.6029,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_A,0.53,1,1.28,1,1,1,react,8,29,none,0.9008,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N03,L1,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_A,2.99,0,4.57,1,1,1,react,4,14,none,0.8081,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_A,0.89,1,1.9,1,1,1,react,2,18,none,0.5099,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_B,1.46,1,2.51,1,1,1,react,5,31,none,0.3216,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N04,L1,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_A,0.74,1,1.52,1,1,1,react,7,32,none,0.7394,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_A,0.96,1,2.87,1,1,1,react,5,30,none,0.939,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_A,1.07,1,1.75,1,1,1,react,2,18,none,0.8321,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N05,L1,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_A,1.7,1,3.61,1,1,1,react,5,28,none,0.84,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_A,1.51,1,2.59,1,1,1,react,5,11,none,0.7791,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_A,2.01,1,2.73,1,1,1,react,5,12,none,0.279,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N06,L1,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_A,2.9,0,4.01,1,1,1,react,10,36,none,0.5357,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_A,0.91,1,1.6,1,1,1,react,7,14,none,0.155,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_B,1.26,1,2.21,1,1,1,react,3,17,none,0.5652,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N07,L1,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_A,1.22,1,2.12,1,1,1,react,8,13,none,0.3012,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_A,1.58,1,2.23,1,1,1,react,4,10,none,0.9317,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_A,3.0,0,4.56,1,1,1,react,8,23,none,0.8325,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N08,L1,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_B,1.27,1,2.54,1,1,1,react,7,12,none,0.596,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_B,2.43,1,3.39,1,1,1,react,2,11,none,0.6191,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_B,5.01,0,5.88,1,1,1,react,10,33,none,0.6218,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N09,L2,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_A,1.5,1,2.17,1,1,1,react,3,22,none,0.4421,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_A,2.56,1,3.66,1,1,1,react,8,26,none,0.4508,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_B,2.09,1,2.84,1,1,1,react,2,18,none,0.5464,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N10,L2,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_B,1.26,1,1.93,1,1,1,react,5,13,none,0.2809,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_A,2.15,1,2.72,1,1,1,react,7,19,none,0.2942,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_B,2.2,1,3.99,1,1,1,react,5,20,none,0.8927,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N11,L2,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_A,4.2,1,5.21,1,1,1,react,4,23,none,0.8005,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_B,2.97,1,,0,1,1,react,4,12,none,0.8143,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_A,3.27,1,4.7,1,1,1,react,4,12,none,0.4792,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N12,L2,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_B,5.74,1,6.93,1,1,1,react,2,13,none,0.7449,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_B,2.32,1,2.95,1,1,1,react,7,18,none,0.4008,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_B,1.92,1,,0,1,1,react,7,11,none,0.0893,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N13,L2,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_A,2.19,1,2.95,1,1,1,react,4,27,none,0.5434,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_B,3.44,1,,0,1,1,react,6,24,none,0.44,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_A,2.95,1,4.05,1,1,1,react,7,12,none,0.3837,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N14,L2,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_A,1.4,1,2.04,1,1,1,react,5,27,none,0.5607,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_A,2.11,1,3.41,1,1,1,react,4,20,none,0.2835,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_B,2.9,1,4.17,1,1,1,react,8,27,none,0.8042,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N15,L2,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_B,1.67,1,2.36,1,1,1,react,8,20,none,0.1225,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_A,2.36,1,3.64,1,1,1,react,2,10,none,0.3978,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_A,1.78,1,,0,1,1,react,4,22,none,0.2523,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N16,L2,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_A,1.89,1,2.65,1,1,1,react,6,23,none,0.2981,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_B,4.08,1,5.4,1,1,1,react,6,12,none,0.3637,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_B,2.23,1,2.81,1,1,1,react,7,25,none,0.4378,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N17,L3,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_A,4.29,1,4.91,1,1,1,react,2,14,none,0.7282,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_B,3.74,1,4.75,1,1,1,react,5,28,none,0.4781,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_A,3.75,1,4.42,1,1,1,react,6,33,none,0.4801,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N18,L3,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_B,7.07,1,7.83,1,1,1,react,7,15,none,0.8653,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_B,4.69,0,5.43,1,1,1,react,8,23,none,0.5639,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_A,2.36,1,2.89,1,1,1,react,7,13,none,0.1366,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N19,L3,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_B,4.94,1,5.83,1,1,1,react,4,23,none,0.6174,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W6_gen_react,W6 Generator + ReAct tool loop,1,operator_B,3.95,1,4.87,1,1,1,react,7,30,none,0.7029,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W6_gen_react,W6 Generator + ReAct tool loop,2,operator_A,4.94,1,5.94,1,1,1,react,5,20,none,0.8331,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json
+N20,L3,W6_gen_react,W6 Generator + ReAct tool loop,3,operator_A,4.37,1,5.7,1,1,1,react,3,14,none,0.8013,sim_v3,SIMULATED — Monte Carlo; see generate_strategy_trials.py + simulation_manifest.json

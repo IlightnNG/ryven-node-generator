@@ -1,13 +1,13 @@
 """
-Generate synthetic trial data aligned with `strategy/GENERATOR_EVALUATION_STRATEGY.md`
-and export high-clarity figures (Plotly + Kaleido).
+Plot strategy evaluation figures from a tidy trials CSV (Plotly + Kaleido).
 
-The synthetic dataset is *illustrative only* — replace CSV with measured trials before thesis submission.
+Data generation lives in `generate_strategy_trials.py` (Monte Carlo simulation or future real CSV).
 
 Usage:
   pip install -r scripts/evaluation/requirements-figures.txt
+  python scripts/evaluation/generate_strategy_trials.py
   python scripts/evaluation/plot_strategy_results.py
-  python scripts/evaluation/plot_strategy_results.py --csv scripts/evaluation/data/strategy_trials_synthetic.csv
+  python scripts/evaluation/plot_strategy_results.py --csv path/to/trials.csv
 """
 
 from __future__ import annotations
@@ -23,6 +23,8 @@ import plotly.graph_objects as go
 import plotly.io as pio
 from plotly.subplots import make_subplots
 
+from strategy_constants import WORKFLOW_COLORS, WORKFLOW_LABELS, WORKFLOWS, task_band
+
 try:
     from scipy.stats import mannwhitneyu
 except ImportError:
@@ -31,31 +33,6 @@ except ImportError:
 
 def _repo_root() -> Path:
     return Path(__file__).resolve().parents[2]
-
-
-_WORKFLOWS: tuple[str, ...] = (
-    "W1_manual",
-    "W2_chat",
-    "W3_single_agent",
-    "W4_three_stage",
-    "W5_react",
-)
-
-_LABELS: dict[str, str] = {
-    "W1_manual": "W1 Manual (no LLM)",
-    "W2_chat": "W2 Manual + plain LLM chat",
-    "W3_single_agent": "W3 Single-turn agent",
-    "W4_three_stage": "W4 3-stage pipeline",
-    "W5_react": "W5 ReAct tool loop",
-}
-
-_COLORS: dict[str, str] = {
-    "W1_manual": "#4E79A7",
-    "W2_chat": "#EDC948",
-    "W3_single_agent": "#59A14F",
-    "W4_three_stage": "#B279A2",
-    "W5_react": "#E15759",
-}
 
 
 def _apply_template() -> None:
@@ -101,15 +78,6 @@ def _apply_template() -> None:
     pio.templates.default = "strategy"
 
 
-def _task_band(task_id: str) -> str:
-    n = int(task_id.replace("N", ""))
-    if n <= 8:
-        return "L1"
-    if n <= 16:
-        return "L2"
-    return "L3"
-
-
 def _wilson_ci(p: float, n: int, z: float = 1.96) -> tuple[float, float]:
     if n <= 0:
         return (float("nan"), float("nan"))
@@ -120,163 +88,8 @@ def _wilson_ci(p: float, n: int, z: float = 1.96) -> tuple[float, float]:
     return max(0.0, center - half), min(1.0, center + half)
 
 
-def generate_synthetic_trials(*, seed: int, n_runs: int = 2) -> pd.DataFrame:
-    """Produce a plausible *tidy* trial table (20 tasks × workflows × runs).
-
-    Narrative baked in (not real measurements):
-    - Manual slowest; chat modest help but brittle;
-    - Single agent faster; 3-stage improves first-shot;
-    - ReAct: highest pass@1, moderate wall-clock, more tool calls / rounds.
-    """
-    rng = np.random.default_rng(seed)
-    task_ids = [f"N{i:02d}" for i in range(1, 21)]
-    rows: list[dict] = []
-
-    # Difficulty raises baseline minutes for a "good" implementation pathway.
-    base_demo = {"L1": 11.0, "L2": 19.0, "L3": 31.0}
-
-    wf_meta = {
-        "W1_manual": {
-            "time_mult": 1.95,
-            "time_jitter": 3.6,
-            "p_instant": 0.60,
-            "p_instant_dl": {"L1": 0.0, "L2": -0.06, "L3": -0.10},
-            "p_final": 0.86,
-            "p_final_dl": {"L1": 0.05, "L2": -0.03, "L3": -0.08},
-            "validation_on": False,
-            "loop_mode": "none",
-            "rounds": (0, 0),
-            "tools": (0, 0),
-        },
-        "W2_chat": {
-            "time_mult": 1.55,
-            "time_jitter": 3.2,
-            "p_instant": 0.52,
-            "p_instant_dl": {"L1": 0.0, "L2": -0.07, "L3": -0.12},
-            "p_final": 0.78,
-            "p_final_dl": {"L1": 0.04, "L2": -0.06, "L3": -0.11},
-            "validation_on": False,
-            "loop_mode": "none",
-            "rounds": (0, 0),
-            "tools": (0, 0),
-        },
-        "W3_single_agent": {
-            "time_mult": 0.58,
-            "time_jitter": 2.4,
-            "p_instant": 0.72,
-            "p_instant_dl": {"L1": 0.0, "L2": -0.05, "L3": -0.09},
-            "p_final": 0.90,
-            "p_final_dl": {"L1": 0.03, "L2": -0.02, "L3": -0.06},
-            "validation_on": True,
-            "loop_mode": "single",
-            "rounds": (1, 1),
-            "tools": (3, 9),
-        },
-        "W4_three_stage": {
-            "time_mult": 0.48,
-            "time_jitter": 2.0,
-            "p_instant": 0.80,
-            "p_instant_dl": {"L1": 0.0, "L2": -0.04, "L3": -0.07},
-            "p_final": 0.94,
-            "p_final_dl": {"L1": 0.02, "L2": -0.02, "L3": -0.05},
-            "validation_on": True,
-            "loop_mode": "3stage",
-            "rounds": (3, 3),
-            "tools": (9, 18),
-        },
-        "W5_react": {
-            "time_mult": 0.54,
-            "time_jitter": 2.6,
-            "p_instant": 0.88,
-            "p_instant_dl": {"L1": 0.0, "L2": -0.03, "L3": -0.05},
-            "p_final": 0.97,
-            "p_final_dl": {"L1": 0.01, "L2": -0.01, "L3": -0.03},
-            "validation_on": True,
-            "loop_mode": "react",
-            "rounds": (2, 7),
-            "tools": (12, 38),
-        },
-    }
-
-    err_pool = ["stub_mismatch", "syntax_error", "validation_error", "off_by_one_ports", "none"]
-
-    for task_id in task_ids:
-        band = _task_band(task_id)
-        b0 = float(base_demo[band])
-        for wf in _WORKFLOWS:
-            meta = wf_meta[wf]
-            for run_id in range(1, n_runs + 1):
-                p_inst = float(np.clip(meta["p_instant"] + meta["p_instant_dl"][band] + rng.normal(0, 0.02), 0.05, 0.98))
-                p_fin = float(np.clip(meta["p_final"] + meta["p_final_dl"][band] + rng.normal(0, 0.02), 0.05, 0.995))
-
-                # wall clock to demo (minutes): log-normal-ish positive
-                med = max(3.0, b0 * meta["time_mult"])
-                sigma = meta["time_jitter"] * (1.15 if band == "L3" else 1.0)
-                t_demo = float(rng.normal(med, sigma))
-                t_demo = float(max(2.5, t_demo))
-
-                instant_ok = bool(rng.random() < p_inst)
-
-                rounds_lo, rounds_hi = meta["rounds"]
-                tools_lo, tools_hi = meta["tools"]
-                llm_rounds = int(rng.integers(rounds_lo, rounds_hi + 1)) if rounds_hi > 0 else 0
-                tool_calls = int(rng.integers(tools_lo, tools_hi + 1)) if tools_hi > 0 else 0
-                if wf == "W5_react":
-                    # correlate time slightly with rounds (more debugging on harder tasks)
-                    t_demo += 0.9 * max(0, llm_rounds - 3)
-                    tool_calls = int(max(tools_lo, tool_calls + 2 * max(0, llm_rounds - 3)))
-
-                # rework for first-shot failures
-                if not instant_ok:
-                    t_demo += float(rng.uniform(4.0, 14.0) * (1.25 if band == "L3" else 1.0))
-                    err = str(rng.choice(err_pool[:-1]))  # not none
-                else:
-                    err = "none"
-
-                instant_flag = 1 if instant_ok else 0
-
-                final_ok = bool(rng.random() < p_fin)
-                if not final_ok:
-                    t_rob = float("nan")
-                    err_top = str(rng.choice(["stub_mismatch", "robust_case_fail", "timeout"]))
-                else:
-                    # reaching robust: extra work beyond demo, larger when demo wasn't instant
-                    extra = rng.uniform(3.0, 10.0)
-                    if not instant_ok:
-                        extra += rng.uniform(8.0, 22.0) * (1.35 if wf in {"W1_manual", "W2_chat"} else 1.0)
-                    if band == "L3":
-                        extra *= 1.18
-                    t_rob = float(max(t_demo + extra, t_demo + 2.0))
-                    err_top = "none"
-
-                rows.append(
-                    {
-                        "task_id": task_id,
-                        "task_band": band,
-                        "workflow": wf,
-                        "workflow_label": _LABELS[wf],
-                        "run_id": run_id,
-                        "operator": "synthetic_operator_A",
-                        "time_to_demo_min": round(t_demo, 2),
-                        "instant_demo_ok": instant_flag,
-                        "time_to_robust_min": (round(t_rob, 2) if final_ok and not math.isnan(t_rob) else ""),
-                        "final_robust_ok": int(final_ok),
-                        "validation_on": int(bool(meta["validation_on"])),
-                        "loop_mode": meta["loop_mode"],
-                        "llm_rounds": llm_rounds,
-                        "tool_calls": tool_calls,
-                        "errors_top": err_top,
-                        "notes": "SYNTHETIC — replace with measured trials before submission",
-                    }
-                )
-
-    df = pd.DataFrame(rows)
-    # stable sort for reproducible diffs
-    return df.sort_values(["workflow", "task_id", "run_id"], kind="mergesort").reset_index(drop=True)
-
-
 def _workflow_cat(df: pd.DataFrame, col: str = "workflow_label") -> pd.Categorical:
-    order = [_LABELS[w] for w in _WORKFLOWS]
+    order = [WORKFLOW_LABELS[w] for w in WORKFLOWS]
     return pd.Categorical(df[col], categories=order, ordered=True)
 
 
@@ -294,17 +107,17 @@ def fig_times_two_panel(df: pd.DataFrame) -> go.Figure:
         horizontal_spacing=0.09,
     )
 
-    for wf in _WORKFLOWS:
+    for wf in WORKFLOWS:
         sub = df.loc[df["workflow"] == wf]
-        lbl = _LABELS[wf]
+        lbl = WORKFLOW_LABELS[wf]
         fig.add_trace(
             go.Box(
                 x=sub["time_to_demo_min"],
                 y=[lbl] * len(sub),
                 name=lbl,
-                marker_color=_COLORS[wf],
+                marker_color=WORKFLOW_COLORS[wf],
                 line=dict(color="#0F172A", width=1),
-                fillcolor=_COLORS[wf],
+                fillcolor=WORKFLOW_COLORS[wf],
                 opacity=0.55,
                 boxpoints="all",
                 jitter=0.28,
@@ -326,9 +139,9 @@ def fig_times_two_panel(df: pd.DataFrame) -> go.Figure:
                 x=sub_ok["tro"],
                 y=[lbl] * len(sub_ok),
                 name=lbl,
-                marker_color=_COLORS[wf],
+                marker_color=WORKFLOW_COLORS[wf],
                 line=dict(color="#0F172A", width=1),
-                fillcolor=_COLORS[wf],
+                fillcolor=WORKFLOW_COLORS[wf],
                 opacity=0.55,
                 boxpoints="all",
                 jitter=0.28,
@@ -342,8 +155,8 @@ def fig_times_two_panel(df: pd.DataFrame) -> go.Figure:
 
     fig.update_xaxes(title_text="Minutes", row=1, col=1, automargin=True)
     fig.update_xaxes(title_text="Minutes", row=1, col=2, automargin=True)
-    fig.update_yaxes(categoryorder="array", categoryarray=[_LABELS[w] for w in _WORKFLOWS], row=1, col=1)
-    fig.update_yaxes(categoryorder="array", categoryarray=[_LABELS[w] for w in _WORKFLOWS], row=1, col=2)
+    fig.update_yaxes(categoryorder="array", categoryarray=[WORKFLOW_LABELS[w] for w in WORKFLOWS], row=1, col=1)
+    fig.update_yaxes(categoryorder="array", categoryarray=[WORKFLOW_LABELS[w] for w in WORKFLOWS], row=1, col=2)
 
     fig.update_layout(
         title=dict(
@@ -360,8 +173,8 @@ def fig_times_two_panel(df: pd.DataFrame) -> go.Figure:
 
 
 def fig_success_rates(df: pd.DataFrame) -> go.Figure:
-    rows = [df.loc[df["workflow"] == wf] for wf in _WORKFLOWS]
-    labels = [_LABELS[w] for w in _WORKFLOWS]
+    rows = [df.loc[df["workflow"] == wf] for wf in WORKFLOWS]
+    labels = [WORKFLOW_LABELS[w] for w in WORKFLOWS]
     p_inst = [r["instant_demo_ok"].mean() for r in rows]
     p_fin = [r["final_robust_ok"].mean() for r in rows]
     n = [len(r) for r in rows]
@@ -428,21 +241,21 @@ def fig_success_rates(df: pd.DataFrame) -> go.Figure:
 
 def fig_median_summary(df: pd.DataFrame) -> go.Figure:
     meds_demo, meds_rob = [], []
-    for wf in _WORKFLOWS:
+    for wf in WORKFLOWS:
         sub = df.loc[df["workflow"] == wf]
         meds_demo.append(float(np.median(sub["time_to_demo_min"])))
         sub_ok = sub.loc[sub["final_robust_ok"] == 1].copy()
         tro = pd.to_numeric(sub_ok["time_to_robust_min"], errors="coerce").dropna()
         meds_rob.append(float(np.median(tro)) if len(tro) else float("nan"))
 
-    labels = [_LABELS[wj] for wj in _WORKFLOWS]
+    labels = [WORKFLOW_LABELS[wj] for wj in WORKFLOWS]
     fig = go.Figure()
     fig.add_trace(
         go.Bar(
             name="median(time_to_demo)",
             x=labels,
             y=meds_demo,
-            marker=dict(color=[_COLORS[w] for w in _WORKFLOWS], line=dict(color="#0F172A", width=1)),
+            marker=dict(color=[WORKFLOW_COLORS[w] for w in WORKFLOWS], line=dict(color="#0F172A", width=1)),
             text=[f"{v:.1f}" for v in meds_demo],
             textposition="auto",
         )
@@ -452,7 +265,7 @@ def fig_median_summary(df: pd.DataFrame) -> go.Figure:
             name="median(time_to_robust | success)",
             x=labels,
             y=meds_rob,
-            marker=dict(color=[_COLORS[w] for w in _WORKFLOWS], line=dict(color="#0F172A", width=1), opacity=0.55, pattern_shape="/"),
+            marker=dict(color=[WORKFLOW_COLORS[w] for w in WORKFLOWS], line=dict(color="#0F172A", width=1), opacity=0.55, pattern_shape="/"),
             text=[("" if math.isnan(v) else f"{v:.1f}") for v in meds_rob],
             textposition="auto",
         )
@@ -481,8 +294,8 @@ def fig_median_summary(df: pd.DataFrame) -> go.Figure:
 
 
 def fig_react_diagnostic(df: pd.DataFrame) -> go.Figure:
-    sub = df.loc[df["workflow"] == "W5_react"].copy()
-    sub["band"] = sub["task_id"].map(_task_band)
+    sub = df.loc[df["workflow"] == "W6_gen_react"].copy()
+    sub["band"] = sub["task_id"].map(task_band)
     palette = {"L1": "#22C55E", "L2": "#F59E0B", "L3": "#EF4444"}
     fig = go.Figure()
     for band in ("L1", "L2", "L3"):
@@ -500,7 +313,7 @@ def fig_react_diagnostic(df: pd.DataFrame) -> go.Figure:
         )
     fig.update_layout(
         title=dict(
-            text="<b>W5 (ReAct) diagnostics: rounds × time-to-demo</b><br><sup>Bubble size ≈ tool_calls (proxy for loop workload)</sup>",
+            text="<b>W6 (Generator + ReAct) diagnostics: rounds × time-to-demo</b><br><sup>Bubble size ≈ tool_calls (proxy for loop workload)</sup>",
             x=0.5,
             xanchor="center",
         ),
@@ -534,7 +347,7 @@ def fig_failure_mix(df: pd.DataFrame) -> go.Figure:
         .size()
         .reset_index(name="count")
     )
-    workflows = [_LABELS[w] for w in _WORKFLOWS]
+    workflows = [WORKFLOW_LABELS[w] for w in WORKFLOWS]
     pivot = g.pivot(index="workflow_label", columns="errors_top", values="count").reindex(workflows).fillna(0)
 
     fig = go.Figure()
@@ -582,16 +395,16 @@ def fig_dashboard(df: pd.DataFrame) -> go.Figure:
     )
 
     # Panel A: demo times (mini box per wf - use violin simplified as bar? use box traces)
-    for wf in _WORKFLOWS:
+    for wf in WORKFLOWS:
         sub = df.loc[df["workflow"] == wf]
-        lbl = _LABELS[wf]
+        lbl = WORKFLOW_LABELS[wf]
         fig.add_trace(
             go.Box(
                 x=sub["time_to_demo_min"],
                 y=[lbl] * len(sub),
-                marker_color=_COLORS[wf],
+                marker_color=WORKFLOW_COLORS[wf],
                 line=dict(color="#0F172A", width=1),
-                fillcolor=_COLORS[wf],
+                fillcolor=WORKFLOW_COLORS[wf],
                 opacity=0.55,
                 orientation="h",
                 showlegend=False,
@@ -601,17 +414,18 @@ def fig_dashboard(df: pd.DataFrame) -> go.Figure:
         )
 
     # Panel B: instant + final as grouped bars (simplified: two series)
-    rows_wf = [df.loc[df["workflow"] == wf] for wf in _WORKFLOWS]
-    labels = [_LABELS[w] for w in _WORKFLOWS]
+    rows_wf = [df.loc[df["workflow"] == wf] for wf in WORKFLOWS]
+    labels = [WORKFLOW_LABELS[w] for w in WORKFLOWS]
     p_inst = [r["instant_demo_ok"].mean() for r in rows_wf]
     p_fin = [r["final_robust_ok"].mean() for r in rows_wf]
     n = [len(r) for r in rows_wf]
-    inst_err_plus = [_wilson_ci(p_inst[i], n[i])[1] - p_inst[i] for i in range(5)]
-    inst_err_minus = [p_inst[i] - _wilson_ci(p_inst[i], n[i])[0] for i in range(5)]
-    fin_err_plus = [_wilson_ci(p_fin[i], n[i])[1] - p_fin[i] for i in range(5)]
-    fin_err_minus = [p_fin[i] - _wilson_ci(p_fin[i], n[i])[0] for i in range(5)]
+    nw = len(WORKFLOWS)
+    inst_err_plus = [_wilson_ci(p_inst[i], n[i])[1] - p_inst[i] for i in range(nw)]
+    inst_err_minus = [p_inst[i] - _wilson_ci(p_inst[i], n[i])[0] for i in range(nw)]
+    fin_err_plus = [_wilson_ci(p_fin[i], n[i])[1] - p_fin[i] for i in range(nw)]
+    fin_err_minus = [p_fin[i] - _wilson_ci(p_fin[i], n[i])[0] for i in range(nw)]
 
-    x = np.arange(5)
+    x = np.arange(nw)
     w = 0.35
     fig.add_trace(
         go.Bar(
@@ -642,12 +456,12 @@ def fig_dashboard(df: pd.DataFrame) -> go.Figure:
     fig.update_xaxes(tickvals=x, ticktext=labels, tickangle=-22, row=1, col=2)
 
     # Panel C: median demo bars
-    meds = [float(np.median(df.loc[df["workflow"] == wf, "time_to_demo_min"])) for wf in _WORKFLOWS]
+    meds = [float(np.median(df.loc[df["workflow"] == wf, "time_to_demo_min"])) for wf in WORKFLOWS]
     fig.add_trace(
         go.Bar(
             x=labels,
             y=meds,
-            marker=dict(color=[_COLORS[w] for w in _WORKFLOWS], line=dict(color="#0F172A", width=1)),
+            marker=dict(color=[WORKFLOW_COLORS[w] for w in WORKFLOWS], line=dict(color="#0F172A", width=1)),
             showlegend=False,
         ),
         row=2,
@@ -655,13 +469,13 @@ def fig_dashboard(df: pd.DataFrame) -> go.Figure:
     )
 
     # Panel D: react
-    rdf = df.loc[df["workflow"] == "W5_react"]
+    rdf = df.loc[df["workflow"] == "W6_gen_react"]
     fig.add_trace(
         go.Scatter(
             x=rdf["llm_rounds"],
             y=rdf["time_to_demo_min"],
             mode="markers",
-            marker=dict(size=12, color=_COLORS["W5_react"], opacity=0.75, line=dict(width=1, color="white")),
+            marker=dict(size=12, color=WORKFLOW_COLORS["W6_gen_react"], opacity=0.75, line=dict(width=1, color="white")),
             showlegend=False,
         ),
         row=2,
@@ -688,22 +502,26 @@ def fig_dashboard(df: pd.DataFrame) -> go.Figure:
 def _mannwhitney_manual_vs_best(df: pd.DataFrame) -> str:
     if mannwhitneyu is None:
         return "Mann–Whitney: scipy not installed (optional)."
-    m = df.loc[df["workflow"] == "W1_manual", "time_to_demo_min"].to_numpy(float)
-    # compare to W5 as "system condition"
-    g = df.loc[df["workflow"] == "W5_react", "time_to_demo_min"].to_numpy(float)
+    m = df.loc[df["workflow"] == "W1_hand_only", "time_to_demo_min"].to_numpy(float)
+    g = df.loc[df["workflow"] == "W6_gen_react", "time_to_demo_min"].to_numpy(float)
     if m.size == 0 or g.size == 0:
         return "Mann–Whitney: insufficient samples."
     try:
         _, p = mannwhitneyu(m, g, alternative="two-sided")
-        return f"Mann–Whitney (W1 vs W5, time-to-demo, two-sided): p={p:.3g}"
+        return f"Mann–Whitney (W1 hand-only vs W6 Gen+ReAct, time-to-demo, two-sided): p={p:.3g}"
     except ValueError:
         return "Mann–Whitney: could not compute (possibly all equal)."
 
 
-def _write_static(fig: go.Figure, base: Path, *, width: int, height: int) -> None:
+def _write_static(fig: go.Figure, base: Path, *, width: int, height: int, enable: bool = True) -> None:
+    if not enable:
+        return
     base.parent.mkdir(parents=True, exist_ok=True)
-    fig.write_image(base.with_suffix(".pdf"), width=width, height=height, scale=2)
-    fig.write_image(base.with_suffix(".png"), width=width, height=height, scale=2)
+    try:
+        fig.write_image(base.with_suffix(".pdf"), width=width, height=height, scale=2)
+        fig.write_image(base.with_suffix(".png"), width=width, height=height, scale=2)
+    except Exception as exc:  # kaleido missing or browser export timeout
+        print(f"Warning: static image export skipped for {base.name}: {exc}", file=sys.stderr)
 
 
 def _write_html(fig: go.Figure, base: Path) -> None:
@@ -716,33 +534,41 @@ def _write_html(fig: go.Figure, base: Path) -> None:
     )
 
 
+def _default_trials_csv() -> Path:
+    return Path(__file__).resolve().parent / "data" / "strategy_trials_simulated.csv"
+
+
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Plot strategy evaluation figures from CSV (or synthesize).")
-    parser.add_argument("--csv", type=Path, default=None, help="Input tidy trials CSV (optional).")
-    parser.add_argument("--out-dir", type=Path, default=_repo_root() / "build" / "figures" / "strategy")
-    parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--runs", type=int, default=2, help="Runs per task×workflow when synthesizing.")
+    parser = argparse.ArgumentParser(description="Plot strategy evaluation figures from a tidy trials CSV.")
     parser.add_argument(
-        "--write-csv",
+        "--csv",
         type=Path,
-        default=_repo_root() / "scripts" / "evaluation" / "data" / "strategy_trials_synthetic.csv",
-        help="Where to write synthesized CSV.",
+        default=None,
+        help=f"Input CSV (default: {_default_trials_csv().as_posix()} if that file exists).",
     )
-    parser.add_argument("--no-synth", action="store_true", help="Require --csv; do not synthesize.")
+    parser.add_argument("--out-dir", type=Path, default=_repo_root() / "build" / "figures" / "strategy")
+    parser.add_argument(
+        "--html-only",
+        action="store_true",
+        help="Skip PDF/PNG (Kaleido); write interactive HTML only (faster).",
+    )
     args = parser.parse_args(argv)
 
     _apply_template()
+    do_static = not args.html_only
 
-    if args.csv and args.csv.is_file():
-        df = pd.read_csv(args.csv)
-    elif args.no_synth:
-        print("Missing --csv or file not found.", file=sys.stderr)
+    csv_path = args.csv
+    if csv_path is None:
+        csv_path = _default_trials_csv()
+    if not csv_path.is_file():
+        print(
+            f"CSV not found: {csv_path}\n"
+            "  Run: python scripts/evaluation/generate_strategy_trials.py\n"
+            "  Or:  python scripts/evaluation/plot_strategy_results.py --csv <path>",
+            file=sys.stderr,
+        )
         return 2
-    else:
-        df = generate_synthetic_trials(seed=args.seed, n_runs=args.runs)
-        args.write_csv.parent.mkdir(parents=True, exist_ok=True)
-        df.to_csv(args.write_csv, index=False, encoding="utf-8-sig")
-        print("Wrote synthetic CSV:", args.write_csv)
+    df = pd.read_csv(csv_path)
 
     required = {
         "task_id",
@@ -759,27 +585,27 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     f1 = fig_times_two_panel(df)
-    _write_static(f1, args.out_dir / "fig-strategy-01-times-demo-robust", width=1460, height=760)
+    _write_static(f1, args.out_dir / "fig-strategy-01-times-demo-robust", width=1460, height=760, enable=do_static)
     _write_html(f1, args.out_dir / "fig-strategy-01-times-demo-robust")
 
     f2 = fig_success_rates(df)
-    _write_static(f2, args.out_dir / "fig-strategy-02-success-rates", width=1360, height=760)
+    _write_static(f2, args.out_dir / "fig-strategy-02-success-rates", width=1360, height=760, enable=do_static)
     _write_html(f2, args.out_dir / "fig-strategy-02-success-rates")
 
     f3 = fig_median_summary(df)
-    _write_static(f3, args.out_dir / "fig-strategy-03-median-summary", width=1360, height=760)
+    _write_static(f3, args.out_dir / "fig-strategy-03-median-summary", width=1360, height=760, enable=do_static)
     _write_html(f3, args.out_dir / "fig-strategy-03-median-summary")
 
     f4 = fig_react_diagnostic(df)
-    _write_static(f4, args.out_dir / "fig-strategy-04-react-diagnostic", width=1160, height=760)
+    _write_static(f4, args.out_dir / "fig-strategy-04-react-diagnostic", width=1160, height=760, enable=do_static)
     _write_html(f4, args.out_dir / "fig-strategy-04-react-diagnostic")
 
     f5 = fig_failure_mix(df)
-    _write_static(f5, args.out_dir / "fig-strategy-05-failure-mix", width=1420, height=780)
+    _write_static(f5, args.out_dir / "fig-strategy-05-failure-mix", width=1420, height=780, enable=do_static)
     _write_html(f5, args.out_dir / "fig-strategy-05-failure-mix")
 
     fd = fig_dashboard(df)
-    _write_static(fd, args.out_dir / "fig-strategy-00-dashboard", width=1560, height=1260)
+    _write_static(fd, args.out_dir / "fig-strategy-00-dashboard", width=1560, height=1260, enable=do_static)
     _write_html(fd, args.out_dir / "fig-strategy-00-dashboard")
 
     stems = [
@@ -792,7 +618,8 @@ def main(argv: list[str] | None = None) -> int:
     ]
     print("Wrote:")
     for stem in stems:
-        for suf in (".pdf", ".png", ".html"):
+        exts = (".html",) if args.html_only else (".pdf", ".png", ".html")
+        for suf in exts:
             print(" ", args.out_dir / f"{stem}{suf}")
     return 0
 
