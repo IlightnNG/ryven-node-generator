@@ -1,0 +1,201 @@
+﻿task_id,task_band,workflow,workflow_label,run_id,operator,time_to_demo_min,instant_demo_ok,time_to_robust_min,final_robust_ok,validation_on,loop_mode,llm_rounds,tool_calls,errors_top,notes
+N01,L1,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,29.09,0,50.82,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N01,L1,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,36.48,0,62.35,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N02,L1,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,16.86,1,21.83,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N02,L1,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,30.56,0,45.95,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N03,L1,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,28.64,1,,0,0,none,0,0,stub_mismatch,SYNTHETIC — replace with measured trials before submission
+N03,L1,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,22.41,1,28.49,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N04,L1,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,31.09,0,64.04,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N04,L1,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,19.71,1,27.35,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N05,L1,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,18.7,1,22.41,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N05,L1,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,23.18,1,32.5,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N06,L1,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,30.63,0,53.21,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N06,L1,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,22.78,1,30.47,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N07,L1,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,13.05,1,22.54,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N07,L1,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,26.23,1,30.1,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N08,L1,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,22.12,1,28.96,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N08,L1,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,30.8,1,40.01,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N09,L2,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,48.03,0,74.6,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N09,L2,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,51.57,0,,0,0,none,0,0,robust_case_fail,SYNTHETIC — replace with measured trials before submission
+N10,L2,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,38.99,1,46.98,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N10,L2,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,36.92,0,56.81,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N11,L2,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,36.45,1,46.41,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N11,L2,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,40.34,0,70.52,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N12,L2,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,42.25,0,,0,0,none,0,0,robust_case_fail,SYNTHETIC — replace with measured trials before submission
+N12,L2,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,48.32,0,70.42,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N13,L2,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,32.87,1,42.02,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N13,L2,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,53.25,0,89.74,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N14,L2,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,52.18,0,76.23,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N14,L2,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,47.97,0,79.62,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N15,L2,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,40.38,1,47.8,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N15,L2,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,42.06,0,77.13,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N16,L2,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,47.58,0,76.76,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N16,L2,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,47.55,0,,0,0,none,0,0,stub_mismatch,SYNTHETIC — replace with measured trials before submission
+N17,L3,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,78.95,0,105.82,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N17,L3,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,64.8,0,101.96,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N18,L3,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,68.44,0,106.43,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N18,L3,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,59.87,1,71.13,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N19,L3,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,53.99,1,61.35,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N19,L3,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,57.85,1,62.17,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N20,L3,W1_manual,W1 Manual (no LLM),1,synthetic_operator_A,65.38,1,72.03,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N20,L3,W1_manual,W1 Manual (no LLM),2,synthetic_operator_A,72.13,0,93.42,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N01,L1,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,24.44,0,,0,0,none,0,0,timeout,SYNTHETIC — replace with measured trials before submission
+N01,L1,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,18.75,1,26.53,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N02,L1,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,18.61,1,22.67,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N02,L1,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,16.73,1,22.27,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N03,L1,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,17.55,1,21.31,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N03,L1,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,27.78,0,52.33,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N04,L1,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,14.82,1,22.26,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N04,L1,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,27.74,0,59.64,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N05,L1,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,29.68,0,56.96,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N05,L1,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,22.96,0,44.07,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N06,L1,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,17.8,1,23.0,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N06,L1,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,20.25,1,28.36,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N07,L1,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,22.9,0,43.17,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N07,L1,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,12.63,1,15.92,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N08,L1,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,23.65,0,39.62,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N08,L1,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,16.13,1,21.33,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N09,L2,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,34.78,0,66.93,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N09,L2,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,31.82,1,,0,0,none,0,0,stub_mismatch,SYNTHETIC — replace with measured trials before submission
+N10,L2,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,30.96,1,,0,0,none,0,0,stub_mismatch,SYNTHETIC — replace with measured trials before submission
+N10,L2,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,21.73,1,,0,0,none,0,0,timeout,SYNTHETIC — replace with measured trials before submission
+N11,L2,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,22.24,1,26.97,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N11,L2,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,28.81,1,32.59,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N12,L2,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,31.49,1,34.62,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N12,L2,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,42.0,0,59.4,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N13,L2,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,38.25,0,,0,0,none,0,0,timeout,SYNTHETIC — replace with measured trials before submission
+N13,L2,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,29.87,1,36.94,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N14,L2,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,31.23,1,40.19,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N14,L2,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,33.81,1,43.39,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N15,L2,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,36.21,0,70.42,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N15,L2,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,27.91,1,,0,0,none,0,0,timeout,SYNTHETIC — replace with measured trials before submission
+N16,L2,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,43.68,0,64.37,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N16,L2,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,46.71,0,77.93,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N17,L3,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,54.57,1,65.22,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N17,L3,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,45.53,1,55.16,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N18,L3,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,55.26,1,60.57,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N18,L3,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,46.26,1,56.91,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N19,L3,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,48.41,1,58.19,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N19,L3,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,63.85,0,96.7,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N20,L3,W2_chat,W2 Manual + plain LLM chat,1,synthetic_operator_A,55.58,0,93.2,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N20,L3,W2_chat,W2 Manual + plain LLM chat,2,synthetic_operator_A,67.08,0,95.93,1,0,none,0,0,none,SYNTHETIC — replace with measured trials before submission
+N01,L1,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,5.15,1,9.06,1,1,single,1,3,none,SYNTHETIC — replace with measured trials before submission
+N01,L1,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,7.94,1,15.84,1,1,single,1,6,none,SYNTHETIC — replace with measured trials before submission
+N02,L1,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,14.98,0,,0,1,single,1,5,stub_mismatch,SYNTHETIC — replace with measured trials before submission
+N02,L1,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,4.14,1,10.33,1,1,single,1,3,none,SYNTHETIC — replace with measured trials before submission
+N03,L1,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,8.39,1,,0,1,single,1,9,robust_case_fail,SYNTHETIC — replace with measured trials before submission
+N03,L1,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,4.81,1,10.85,1,1,single,1,5,none,SYNTHETIC — replace with measured trials before submission
+N04,L1,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,10.96,0,36.47,1,1,single,1,9,none,SYNTHETIC — replace with measured trials before submission
+N04,L1,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,14.69,0,42.35,1,1,single,1,6,none,SYNTHETIC — replace with measured trials before submission
+N05,L1,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,5.59,1,10.67,1,1,single,1,3,none,SYNTHETIC — replace with measured trials before submission
+N05,L1,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,10.54,1,18.11,1,1,single,1,6,none,SYNTHETIC — replace with measured trials before submission
+N06,L1,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,6.87,1,,0,1,single,1,3,robust_case_fail,SYNTHETIC — replace with measured trials before submission
+N06,L1,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,12.93,0,28.9,1,1,single,1,9,none,SYNTHETIC — replace with measured trials before submission
+N07,L1,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,8.61,1,,0,1,single,1,8,stub_mismatch,SYNTHETIC — replace with measured trials before submission
+N07,L1,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,5.93,1,,0,1,single,1,6,stub_mismatch,SYNTHETIC — replace with measured trials before submission
+N08,L1,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,10.22,0,27.17,1,1,single,1,8,none,SYNTHETIC — replace with measured trials before submission
+N08,L1,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,7.42,1,15.36,1,1,single,1,4,none,SYNTHETIC — replace with measured trials before submission
+N09,L2,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,7.54,1,14.98,1,1,single,1,5,none,SYNTHETIC — replace with measured trials before submission
+N09,L2,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,27.05,0,,0,1,single,1,4,timeout,SYNTHETIC — replace with measured trials before submission
+N10,L2,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,16.21,0,43.54,1,1,single,1,5,none,SYNTHETIC — replace with measured trials before submission
+N10,L2,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,10.21,1,20.19,1,1,single,1,3,none,SYNTHETIC — replace with measured trials before submission
+N11,L2,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,8.68,1,14.59,1,1,single,1,9,none,SYNTHETIC — replace with measured trials before submission
+N11,L2,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,8.54,1,14.96,1,1,single,1,5,none,SYNTHETIC — replace with measured trials before submission
+N12,L2,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,15.21,0,,0,1,single,1,9,stub_mismatch,SYNTHETIC — replace with measured trials before submission
+N12,L2,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,21.84,0,41.51,1,1,single,1,5,none,SYNTHETIC — replace with measured trials before submission
+N13,L2,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,10.15,1,15.79,1,1,single,1,5,none,SYNTHETIC — replace with measured trials before submission
+N13,L2,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,25.38,0,47.62,1,1,single,1,3,none,SYNTHETIC — replace with measured trials before submission
+N14,L2,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,10.62,1,17.38,1,1,single,1,9,none,SYNTHETIC — replace with measured trials before submission
+N14,L2,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,24.57,0,42.36,1,1,single,1,3,none,SYNTHETIC — replace with measured trials before submission
+N15,L2,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,20.96,0,41.28,1,1,single,1,5,none,SYNTHETIC — replace with measured trials before submission
+N15,L2,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,11.03,1,18.62,1,1,single,1,9,none,SYNTHETIC — replace with measured trials before submission
+N16,L2,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,10.55,1,20.54,1,1,single,1,4,none,SYNTHETIC — replace with measured trials before submission
+N16,L2,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,14.19,1,,0,1,single,1,9,timeout,SYNTHETIC — replace with measured trials before submission
+N17,L3,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,28.54,0,55.66,1,1,single,1,3,none,SYNTHETIC — replace with measured trials before submission
+N17,L3,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,16.92,1,23.75,1,1,single,1,5,none,SYNTHETIC — replace with measured trials before submission
+N18,L3,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,15.55,1,24.14,1,1,single,1,3,none,SYNTHETIC — replace with measured trials before submission
+N18,L3,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,16.01,1,24.67,1,1,single,1,8,none,SYNTHETIC — replace with measured trials before submission
+N19,L3,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,18.04,1,21.8,1,1,single,1,9,none,SYNTHETIC — replace with measured trials before submission
+N19,L3,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,12.42,1,22.46,1,1,single,1,7,none,SYNTHETIC — replace with measured trials before submission
+N20,L3,W3_single_agent,W3 Single-turn agent,1,synthetic_operator_A,26.0,0,49.1,1,1,single,1,9,none,SYNTHETIC — replace with measured trials before submission
+N20,L3,W3_single_agent,W3 Single-turn agent,2,synthetic_operator_A,17.28,1,28.82,1,1,single,1,3,none,SYNTHETIC — replace with measured trials before submission
+N01,L1,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,5.74,1,9.72,1,1,3stage,3,17,none,SYNTHETIC — replace with measured trials before submission
+N01,L1,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,5.86,1,14.32,1,1,3stage,3,11,none,SYNTHETIC — replace with measured trials before submission
+N02,L1,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,5.76,1,14.07,1,1,3stage,3,9,none,SYNTHETIC — replace with measured trials before submission
+N02,L1,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,5.32,1,11.23,1,1,3stage,3,9,none,SYNTHETIC — replace with measured trials before submission
+N03,L1,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,17.63,0,43.29,1,1,3stage,3,11,none,SYNTHETIC — replace with measured trials before submission
+N03,L1,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,8.35,1,12.21,1,1,3stage,3,9,none,SYNTHETIC — replace with measured trials before submission
+N04,L1,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,4.54,1,9.72,1,1,3stage,3,11,none,SYNTHETIC — replace with measured trials before submission
+N04,L1,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,6.15,1,9.3,1,1,3stage,3,14,none,SYNTHETIC — replace with measured trials before submission
+N05,L1,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,5.41,1,9.83,1,1,3stage,3,14,none,SYNTHETIC — replace with measured trials before submission
+N05,L1,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,7.62,1,17.17,1,1,3stage,3,15,none,SYNTHETIC — replace with measured trials before submission
+N06,L1,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,2.78,1,12.21,1,1,3stage,3,12,none,SYNTHETIC — replace with measured trials before submission
+N06,L1,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,9.34,0,36.65,1,1,3stage,3,13,none,SYNTHETIC — replace with measured trials before submission
+N07,L1,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,7.41,1,13.97,1,1,3stage,3,13,none,SYNTHETIC — replace with measured trials before submission
+N07,L1,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,9.43,1,14.57,1,1,3stage,3,18,none,SYNTHETIC — replace with measured trials before submission
+N08,L1,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,5.11,1,9.27,1,1,3stage,3,16,none,SYNTHETIC — replace with measured trials before submission
+N08,L1,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,17.24,0,32.11,1,1,3stage,3,14,none,SYNTHETIC — replace with measured trials before submission
+N09,L2,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,10.55,1,18.13,1,1,3stage,3,17,none,SYNTHETIC — replace with measured trials before submission
+N09,L2,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,9.62,1,15.04,1,1,3stage,3,13,none,SYNTHETIC — replace with measured trials before submission
+N10,L2,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,14.79,0,29.09,1,1,3stage,3,11,none,SYNTHETIC — replace with measured trials before submission
+N10,L2,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,9.47,1,,0,1,3stage,3,13,robust_case_fail,SYNTHETIC — replace with measured trials before submission
+N11,L2,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,15.64,0,39.57,1,1,3stage,3,14,none,SYNTHETIC — replace with measured trials before submission
+N11,L2,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,10.65,1,14.71,1,1,3stage,3,13,none,SYNTHETIC — replace with measured trials before submission
+N12,L2,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,5.55,1,14.66,1,1,3stage,3,9,none,SYNTHETIC — replace with measured trials before submission
+N12,L2,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,6.95,1,15.03,1,1,3stage,3,14,none,SYNTHETIC — replace with measured trials before submission
+N13,L2,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,10.78,1,15.6,1,1,3stage,3,13,none,SYNTHETIC — replace with measured trials before submission
+N13,L2,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,10.57,1,14.34,1,1,3stage,3,14,none,SYNTHETIC — replace with measured trials before submission
+N14,L2,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,20.93,0,42.18,1,1,3stage,3,9,none,SYNTHETIC — replace with measured trials before submission
+N14,L2,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,9.89,1,19.33,1,1,3stage,3,12,none,SYNTHETIC — replace with measured trials before submission
+N15,L2,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,6.65,1,11.38,1,1,3stage,3,10,none,SYNTHETIC — replace with measured trials before submission
+N15,L2,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,8.57,1,16.3,1,1,3stage,3,16,none,SYNTHETIC — replace with measured trials before submission
+N16,L2,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,9.99,1,13.77,1,1,3stage,3,13,none,SYNTHETIC — replace with measured trials before submission
+N16,L2,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,8.57,1,16.37,1,1,3stage,3,17,none,SYNTHETIC — replace with measured trials before submission
+N17,L3,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,13.59,1,25.19,1,1,3stage,3,18,none,SYNTHETIC — replace with measured trials before submission
+N17,L3,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,12.15,1,21.76,1,1,3stage,3,12,none,SYNTHETIC — replace with measured trials before submission
+N18,L3,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,26.35,0,48.0,1,1,3stage,3,10,none,SYNTHETIC — replace with measured trials before submission
+N18,L3,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,16.18,1,,0,1,3stage,3,18,stub_mismatch,SYNTHETIC — replace with measured trials before submission
+N19,L3,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,19.49,1,29.43,1,1,3stage,3,9,none,SYNTHETIC — replace with measured trials before submission
+N19,L3,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,32.52,0,58.94,1,1,3stage,3,11,none,SYNTHETIC — replace with measured trials before submission
+N20,L3,W4_three_stage,W4 3-stage pipeline,1,synthetic_operator_A,31.59,0,67.55,1,1,3stage,3,10,none,SYNTHETIC — replace with measured trials before submission
+N20,L3,W4_three_stage,W4 3-stage pipeline,2,synthetic_operator_A,26.62,0,,0,1,3stage,3,12,stub_mismatch,SYNTHETIC — replace with measured trials before submission
+N01,L1,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,6.12,1,13.08,1,1,react,4,32,none,SYNTHETIC — replace with measured trials before submission
+N01,L1,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,10.16,1,16.22,1,1,react,6,26,none,SYNTHETIC — replace with measured trials before submission
+N02,L1,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,9.91,1,14.11,1,1,react,5,34,none,SYNTHETIC — replace with measured trials before submission
+N02,L1,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,2.5,1,8.88,1,1,react,2,19,none,SYNTHETIC — replace with measured trials before submission
+N03,L1,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,8.54,1,13.72,1,1,react,7,39,none,SYNTHETIC — replace with measured trials before submission
+N03,L1,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,9.53,1,13.45,1,1,react,7,45,none,SYNTHETIC — replace with measured trials before submission
+N04,L1,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,4.5,1,9.72,1,1,react,2,25,none,SYNTHETIC — replace with measured trials before submission
+N04,L1,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,6.76,1,11.51,1,1,react,6,31,none,SYNTHETIC — replace with measured trials before submission
+N05,L1,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,7.29,1,16.91,1,1,react,6,30,none,SYNTHETIC — replace with measured trials before submission
+N05,L1,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,6.9,1,13.9,1,1,react,6,22,none,SYNTHETIC — replace with measured trials before submission
+N06,L1,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,10.14,1,18.57,1,1,react,7,26,none,SYNTHETIC — replace with measured trials before submission
+N06,L1,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,7.3,1,14.54,1,1,react,3,12,none,SYNTHETIC — replace with measured trials before submission
+N07,L1,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,5.87,1,12.99,1,1,react,2,23,none,SYNTHETIC — replace with measured trials before submission
+N07,L1,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,5.18,1,12.14,1,1,react,2,18,none,SYNTHETIC — replace with measured trials before submission
+N08,L1,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,10.01,1,13.32,1,1,react,2,20,none,SYNTHETIC — replace with measured trials before submission
+N08,L1,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,4.54,1,9.24,1,1,react,3,31,none,SYNTHETIC — replace with measured trials before submission
+N09,L2,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,12.76,1,22.6,1,1,react,7,46,none,SYNTHETIC — replace with measured trials before submission
+N09,L2,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,15.37,1,24.13,1,1,react,5,37,none,SYNTHETIC — replace with measured trials before submission
+N10,L2,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,17.52,0,41.99,1,1,react,4,20,none,SYNTHETIC — replace with measured trials before submission
+N10,L2,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,10.44,1,15.42,1,1,react,7,24,none,SYNTHETIC — replace with measured trials before submission
+N11,L2,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,11.88,1,15.66,1,1,react,4,39,none,SYNTHETIC — replace with measured trials before submission
+N11,L2,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,13.35,1,22.32,1,1,react,3,30,none,SYNTHETIC — replace with measured trials before submission
+N12,L2,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,10.63,1,19.2,1,1,react,7,33,none,SYNTHETIC — replace with measured trials before submission
+N12,L2,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,21.25,0,,0,1,react,5,26,stub_mismatch,SYNTHETIC — replace with measured trials before submission
+N13,L2,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,26.54,0,39.97,1,1,react,6,42,none,SYNTHETIC — replace with measured trials before submission
+N13,L2,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,7.36,1,11.51,1,1,react,7,40,none,SYNTHETIC — replace with measured trials before submission
+N14,L2,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,14.72,1,23.28,1,1,react,4,31,none,SYNTHETIC — replace with measured trials before submission
+N14,L2,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,9.45,1,,0,1,react,5,36,stub_mismatch,SYNTHETIC — replace with measured trials before submission
+N15,L2,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,14.56,1,19.35,1,1,react,6,43,none,SYNTHETIC — replace with measured trials before submission
+N15,L2,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,14.25,1,20.05,1,1,react,4,32,none,SYNTHETIC — replace with measured trials before submission
+N16,L2,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,16.15,1,,0,1,react,6,37,stub_mismatch,SYNTHETIC — replace with measured trials before submission
+N16,L2,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,11.82,1,20.64,1,1,react,3,32,none,SYNTHETIC — replace with measured trials before submission
+N17,L3,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,24.99,1,33.5,1,1,react,4,14,none,SYNTHETIC — replace with measured trials before submission
+N17,L3,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,13.76,1,20.48,1,1,react,2,34,none,SYNTHETIC — replace with measured trials before submission
+N18,L3,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,15.27,1,19.66,1,1,react,4,31,none,SYNTHETIC — replace with measured trials before submission
+N18,L3,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,21.77,1,32.97,1,1,react,3,23,none,SYNTHETIC — replace with measured trials before submission
+N19,L3,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,18.99,1,26.04,1,1,react,3,29,none,SYNTHETIC — replace with measured trials before submission
+N19,L3,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,25.37,0,45.96,1,1,react,7,25,none,SYNTHETIC — replace with measured trials before submission
+N20,L3,W5_react,W5 ReAct tool loop,1,synthetic_operator_A,19.39,1,23.67,1,1,react,7,27,none,SYNTHETIC — replace with measured trials before submission
+N20,L3,W5_react,W5 ReAct tool loop,2,synthetic_operator_A,20.34,0,51.14,1,1,react,4,36,none,SYNTHETIC — replace with measured trials before submission
