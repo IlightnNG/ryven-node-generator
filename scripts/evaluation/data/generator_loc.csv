@@ -1,0 +1,6 @@
+workflow_key,label,boilerplate_lines,custom_logic_lines,total_lines
+manual,Hand-written package,186,92,278
+generator_gui,Generator UI (deterministic templates),168,92,260
+ai_1shot_no_check,AI 1-shot (no validation gate),174,92,266
+ai_1shot_validated,AI 1-shot + AST/JSON validation,170,92,262
+ai_react_validated,ReAct loop + validation until import OK,169,92,261
