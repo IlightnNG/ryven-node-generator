@@ -12,7 +12,7 @@
     "sigma_log_demo": 0.28,
     "sigma_log_rework": 0.42
   },
-  "output_csv": "E:/大学/FYP/pyside6/Generator/scripts/evaluation/data/strategy_trials_simulated.csv",
+  "output_csv": "D:/ryven/ryven-node-generator/scripts/evaluation/data/strategy_trials_simulated.csv",
   "summary": {
     "W1_hand_only": {
       "n_trials": 60,

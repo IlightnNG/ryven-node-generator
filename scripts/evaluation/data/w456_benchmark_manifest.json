@@ -1,0 +1,29 @@
+{
+  "schema": "w456_benchmark_manifest_v1",
+  "started_unix": 1775725460.7504287,
+  "finished_unix": 1775725575.7076168,
+  "tasks_json": "D:/ryven/ryven-node-generator/scripts/evaluation/data/node_tasks_bench_sat_ml_v1.json",
+  "tasks_schema_version": "node_tasks_bench_sat_ml_v1",
+  "out_csv": "D:/ryven/ryven-node-generator/scripts/evaluation/data/w456_real_trials.csv",
+  "n_rows_this_run": 3,
+  "out_csv_total_rows": 3,
+  "append_mode": false,
+  "replace_existing_tasks": false,
+  "workflows": [
+    "W4_gen_single",
+    "W5_gen_3stage",
+    "W6_gen_react"
+  ],
+  "runs_per_task": 1,
+  "task_ids_this_run": [
+    "N01"
+  ],
+  "dry_run": false,
+  "shell_policy": "deny",
+  "model_name_resolved": "qwen3.5-27b",
+  "git_rev": "c15200e60cf9dd44bdf715eca14ed347a0a97c55",
+  "merge_hybrid": false,
+  "merge_base_csv": null,
+  "merge_hybrid_out": null,
+  "interpretation": "Automated API benchmark: real LLM calls via run_react_session; correctness from evaluate_stub_cases on the tasks JSON (see tasks_json + tasks_schema_version). Not a human factors study."
+}

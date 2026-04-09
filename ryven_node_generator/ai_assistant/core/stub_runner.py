@@ -129,6 +129,27 @@ def run_logic_once(core_logic: str, node: dict[str, Any], case: dict[str, Any]) 
     return outputs, None
 
 
+def _stub_values_equal(got: Any, exp: Any) -> bool:
+    """Safe equality for stub checks; avoids ``if (ndarray != x)`` boolean ambiguity."""
+    if got is exp:
+        return True
+    try:
+        np = importlib.import_module("numpy")
+    except Exception:
+        np = None  # type: ignore[assignment]
+    if np is not None:
+        try:
+            ga = np.asarray(got)
+            ea = np.asarray(exp)
+            return bool(np.array_equal(ga, ea, equal_nan=True))
+        except (TypeError, ValueError):
+            pass
+    try:
+        return bool(got == exp)
+    except ValueError:
+        return False
+
+
 def evaluate_stub_cases(core_logic: str, node: dict[str, Any], cases: list[dict[str, Any]]) -> dict[str, Any]:
     """Run stub cases; same semantics as former self-repair evaluator."""
     case_results: list[_CaseResult] = []
@@ -148,7 +169,7 @@ def evaluate_stub_cases(core_logic: str, node: dict[str, Any], cases: list[dict[
                 except Exception:
                     continue
                 got = outputs.get(out_idx, None)
-                if got != exp:
+                if not _stub_values_equal(got, exp):
                     mismatch = f"output[{out_idx}] expected={exp!r}, got={got!r}"
                     break
             strict = bool(case.get("strict", False))

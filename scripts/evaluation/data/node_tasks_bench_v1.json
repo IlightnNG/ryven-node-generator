@@ -1,0 +1,491 @@
+{
+  "schema_version": "node_tasks_bench_v1",
+  "description": "20 Ryven-style generator benchmark tasks (L1/L2/L3). Ports use type 'data' only unless noted. core_logic must use self.get_input_val(i) and self.set_output_val(j, Data(...)) per templates_v2. Stub cases align with ryven_node_generator.ai_assistant.core.stub_runner.evaluate_stub_cases (expected_outputs keys are output port indices as strings).",
+  "tasks": [
+    {
+      "task_id": "N01",
+      "band": "L1",
+      "title": "Relay Data",
+      "class_name_suggestion": "RelayDataNode",
+      "description_zh": "单数据输入原样输出（恒等/中继），常用于调试连线。",
+      "inputs": [
+        {"label": "in", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "out", "type": "data"}
+      ],
+      "core_logic_requirement": "Read data port 0; write the same value to data output 0 as Data(...). Handle None by passing through or output Data(None) consistently.",
+      "tags": ["basics", "identity"],
+      "demo_stub_cases": [
+        {"inputs": [42], "expected_outputs": {"0": 42}, "strict": true},
+        {"inputs": ["hello"], "expected_outputs": {"0": "hello"}, "strict": true}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [null], "expected_outputs": {"0": null}, "strict": true},
+        {"inputs": [0], "expected_outputs": {"0": 0}, "strict": true}
+      ]
+    },
+    {
+      "task_id": "N02",
+      "band": "L1",
+      "title": "Add Floats",
+      "class_name_suggestion": "AddFloatsNode",
+      "description_zh": "两路数值相加（需安全类型转换）。",
+      "inputs": [
+        {"label": "a", "type": "data"},
+        {"label": "b", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "sum", "type": "data"}
+      ],
+      "core_logic_requirement": "Coerce a,b to float; if either is None, output Data(0.0) or document a single fallback policy and stick to it.",
+      "tags": ["math", "arithmetic"],
+      "demo_stub_cases": [
+        {"inputs": [1, 2], "expected_outputs": {"0": 3.0}, "strict": false},
+        {"inputs": [1.5, 2.5], "expected_outputs": {"0": 4.0}, "strict": false}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [null, 5], "expected_outputs": {"0": 0.0}, "strict": false},
+        {"inputs": ["3", 4], "expected_outputs": {"0": 7.0}, "strict": false}
+      ]
+    },
+    {
+      "task_id": "N03",
+      "band": "L1",
+      "title": "Multiply Floats",
+      "class_name_suggestion": "MulFloatsNode",
+      "description_zh": "两路数值相乘（需安全类型转换，禁止对非数值直接 *）。",
+      "inputs": [
+        {"label": "a", "type": "data"},
+        {"label": "b", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "product", "type": "data"}
+      ],
+      "core_logic_requirement": "float(a)*float(b) with try/except or guards; None -> 0.0 or fixed policy.",
+      "tags": ["math", "arithmetic"],
+      "demo_stub_cases": [
+        {"inputs": [2, 3], "expected_outputs": {"0": 6.0}, "strict": false},
+        {"inputs": [-1, 4], "expected_outputs": {"0": -4.0}, "strict": false}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [0, 99], "expected_outputs": {"0": 0.0}, "strict": false},
+        {"inputs": ["2.5", 2], "expected_outputs": {"0": 5.0}, "strict": false}
+      ]
+    },
+    {
+      "task_id": "N04",
+      "band": "L1",
+      "title": "Max Of Two",
+      "class_name_suggestion": "MaxTwoNode",
+      "description_zh": "输出两数较大者（同类型比较或统一转 float）。",
+      "inputs": [
+        {"label": "a", "type": "data"},
+        {"label": "b", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "max", "type": "data"}
+      ],
+      "core_logic_requirement": "Numeric max after coercion; if invalid, fallback consistent with N02.",
+      "tags": ["math", "compare"],
+      "demo_stub_cases": [
+        {"inputs": [3, 7], "expected_outputs": {"0": 7}, "strict": false},
+        {"inputs": [10, 2], "expected_outputs": {"0": 10}, "strict": false}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [-5, -1], "expected_outputs": {"0": -1}, "strict": false},
+        {"inputs": [null, 4], "expected_outputs": {"0": 4}, "strict": false}
+      ]
+    },
+    {
+      "task_id": "N05",
+      "band": "L1",
+      "title": "Concat Strings",
+      "class_name_suggestion": "ConcatStrNode",
+      "description_zh": "字符串拼接（需处理 None）。",
+      "inputs": [
+        {"label": "a", "type": "data"},
+        {"label": "b", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "out", "type": "data"}
+      ],
+      "core_logic_requirement": "str(a)+str(b) with None -> empty string or fixed rule.",
+      "tags": ["string"],
+      "demo_stub_cases": [
+        {"inputs": ["foo", "bar"], "expected_outputs": {"0": "foobar"}, "strict": true},
+        {"inputs": ["", "x"], "expected_outputs": {"0": "x"}, "strict": true}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [null, "z"], "expected_outputs": {"0": "z"}, "strict": false},
+        {"inputs": [123, "px"], "expected_outputs": {"0": "123px"}, "strict": true}
+      ]
+    },
+    {
+      "task_id": "N06",
+      "band": "L1",
+      "title": "Constant Pi",
+      "class_name_suggestion": "ConstPiNode",
+      "description_zh": "无输入常量源，输出圆周率（教学常用）。",
+      "inputs": [],
+      "outputs": [
+        {"label": "pi", "type": "data"}
+      ],
+      "core_logic_requirement": "No get_input_val; set_output_val(0, Data(math.pi)).",
+      "tags": ["source", "math"],
+      "demo_stub_cases": [
+        {"inputs": [], "expected_outputs": null, "strict": false, "note": "smoke only; optional strict check in harness"}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [], "expected_outputs": null, "strict": false}
+      ],
+      "acceptance_note": "For automated checks, use abs(out-math.pi)<1e-9 in a custom assert if strict JSON float is awkward."
+    },
+    {
+      "task_id": "N07",
+      "band": "L1",
+      "title": "Absolute Value",
+      "class_name_suggestion": "AbsValNode",
+      "description_zh": "数值绝对值。",
+      "inputs": [
+        {"label": "x", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "abs_x", "type": "data"}
+      ],
+      "core_logic_requirement": "abs(float(x)) with safe coercion; invalid -> 0.0.",
+      "tags": ["math"],
+      "demo_stub_cases": [
+        {"inputs": [-3], "expected_outputs": {"0": 3.0}, "strict": false},
+        {"inputs": [2.5], "expected_outputs": {"0": 2.5}, "strict": false}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [0], "expected_outputs": {"0": 0.0}, "strict": false},
+        {"inputs": ["-4"], "expected_outputs": {"0": 4.0}, "strict": false}
+      ]
+    },
+    {
+      "task_id": "N08",
+      "band": "L1",
+      "title": "Clamp Scalar",
+      "class_name_suggestion": "ClampScalarNode",
+      "description_zh": "将 x 限制在 [lo, hi] 闭区间内。",
+      "inputs": [
+        {"label": "x", "type": "data"},
+        {"label": "lo", "type": "data"},
+        {"label": "hi", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "y", "type": "data"}
+      ],
+      "core_logic_requirement": "y = min(max(x, lo), hi) after float coercion; if lo>hi swap or reject with fixed policy.",
+      "tags": ["math", "bounds"],
+      "demo_stub_cases": [
+        {"inputs": [5, 0, 10], "expected_outputs": {"0": 5.0}, "strict": false},
+        {"inputs": [-1, 0, 10], "expected_outputs": {"0": 0.0}, "strict": false},
+        {"inputs": [100, 0, 10], "expected_outputs": {"0": 10.0}, "strict": false}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [3, 10, 0], "expected_outputs": {"0": 3.0}, "strict": false, "note": "if swap: expect 3 still in [0,10]"},
+        {"inputs": [null, 0, 1], "expected_outputs": {"0": 0.0}, "strict": false}
+      ]
+    },
+    {
+      "task_id": "N09",
+      "band": "L2",
+      "title": "Weighted Sum",
+      "class_name_suggestion": "WeightedSumNode",
+      "description_zh": "计算 w1*x + w2*y（四路数据：x,y,w1,w2）。",
+      "inputs": [
+        {"label": "x", "type": "data"},
+        {"label": "y", "type": "data"},
+        {"label": "w1", "type": "data"},
+        {"label": "w2", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "out", "type": "data"}
+      ],
+      "core_logic_requirement": "All operands coerced to float; formula w1*x+w2*y.",
+      "tags": ["math", "linear"],
+      "demo_stub_cases": [
+        {"inputs": [1, 2, 1, 1], "expected_outputs": {"0": 3.0}, "strict": false},
+        {"inputs": [2, 3, 0.5, 1], "expected_outputs": {"0": 4.0}, "strict": false}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [1, 1, null, 1], "expected_outputs": {"0": 1.0}, "strict": false},
+        {"inputs": ["1", "2", "1", "1"], "expected_outputs": {"0": 3.0}, "strict": false}
+      ]
+    },
+    {
+      "task_id": "N10",
+      "band": "L2",
+      "title": "Safe Divide",
+      "class_name_suggestion": "SafeDivideNode",
+      "description_zh": "a/b；分母为 0 或无效时输出约定哨兵（如 0.0）。",
+      "inputs": [
+        {"label": "a", "type": "data"},
+        {"label": "b", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "q", "type": "data"}
+      ],
+      "core_logic_requirement": "If b==0 or None or not finite, return Data(0.0); else float(a)/float(b).",
+      "tags": ["math", "robustness"],
+      "demo_stub_cases": [
+        {"inputs": [10, 2], "expected_outputs": {"0": 5.0}, "strict": false},
+        {"inputs": [1, 4], "expected_outputs": {"0": 0.25}, "strict": false}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [5, 0], "expected_outputs": {"0": 0.0}, "strict": true},
+        {"inputs": [3, null], "expected_outputs": {"0": 0.0}, "strict": true},
+        {"inputs": [1, 0.0], "expected_outputs": {"0": 0.0}, "strict": true}
+      ]
+    },
+    {
+      "task_id": "N11",
+      "band": "L2",
+      "title": "Split Count",
+      "class_name_suggestion": "SplitCountNode",
+      "description_zh": "按分隔符拆分字符串，输出段数（非正则，简单 str.split）。",
+      "inputs": [
+        {"label": "text", "type": "data"},
+        {"label": "sep", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "count", "type": "data"}
+      ],
+      "core_logic_requirement": "None -> empty string; sep None -> default ','; len(text.split(sep)).",
+      "tags": ["string", "data-prep"],
+      "demo_stub_cases": [
+        {"inputs": ["a,b,c", ","], "expected_outputs": {"0": 3}, "strict": true},
+        {"inputs": ["hello", ","], "expected_outputs": {"0": 1}, "strict": true}
+      ],
+      "robust_stub_cases": [
+        {"inputs": ["", ","], "expected_outputs": {"0": 1}, "strict": true},
+        {"inputs": [null, ","], "expected_outputs": {"0": 1}, "strict": false}
+      ]
+    },
+    {
+      "task_id": "N12",
+      "band": "L2",
+      "title": "Linear Interpolate",
+      "class_name_suggestion": "LerpNode",
+      "description_zh": "线性插值：out = a + t*(b-a)，t 通常 ∈[0,1] 但不强制。",
+      "inputs": [
+        {"label": "a", "type": "data"},
+        {"label": "b", "type": "data"},
+        {"label": "t", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "out", "type": "data"}
+      ],
+      "core_logic_requirement": "Coerce a,b,t to float; formula as above.",
+      "tags": ["math", "graphics"],
+      "demo_stub_cases": [
+        {"inputs": [0, 10, 0.5], "expected_outputs": {"0": 5.0}, "strict": false},
+        {"inputs": [100, 200, 0], "expected_outputs": {"0": 100.0}, "strict": false}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [0, 10, 1], "expected_outputs": {"0": 10.0}, "strict": false},
+        {"inputs": [0, 10, null], "expected_outputs": {"0": 0.0}, "strict": false}
+      ]
+    },
+    {
+      "task_id": "N13",
+      "band": "L2",
+      "title": "Logical AND",
+      "class_name_suggestion": "LogicAndNode",
+      "description_zh": "两路 0/1 或布尔语义，输出 1 或 0。",
+      "inputs": [
+        {"label": "p", "type": "data"},
+        {"label": "q", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "out", "type": "data"}
+      ],
+      "core_logic_requirement": "Treat truthy: non-zero numeric, True, non-empty string as True; output int 0/1.",
+      "tags": ["logic"],
+      "demo_stub_cases": [
+        {"inputs": [1, 1], "expected_outputs": {"0": 1}, "strict": true},
+        {"inputs": [1, 0], "expected_outputs": {"0": 0}, "strict": true}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [0, 0], "expected_outputs": {"0": 0}, "strict": true},
+        {"inputs": [null, 1], "expected_outputs": {"0": 0}, "strict": false}
+      ]
+    },
+    {
+      "task_id": "N14",
+      "band": "L2",
+      "title": "Safe Modulo",
+      "class_name_suggestion": "SafeModNode",
+      "description_zh": "a % b；b 为 0 或无效时输出 0。",
+      "inputs": [
+        {"label": "a", "type": "data"},
+        {"label": "b", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "m", "type": "data"}
+      ],
+      "core_logic_requirement": "int/float modulo after coercion; zero divisor -> 0.",
+      "tags": ["math"],
+      "demo_stub_cases": [
+        {"inputs": [10, 3], "expected_outputs": {"0": 1}, "strict": false},
+        {"inputs": [7, 7], "expected_outputs": {"0": 0}, "strict": false}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [5, 0], "expected_outputs": {"0": 0}, "strict": true},
+        {"inputs": [-1, 5], "expected_outputs": {"0": 4}, "strict": false}
+      ]
+    },
+    {
+      "task_id": "N15",
+      "band": "L2",
+      "title": "Number Pair Format",
+      "class_name_suggestion": "FormatPairNode",
+      "description_zh": "将两数格式化为 \"a|b\"（分隔符固定为 |）。",
+      "inputs": [
+        {"label": "a", "type": "data"},
+        {"label": "b", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "s", "type": "data"}
+      ],
+      "core_logic_requirement": "str(a)+'|'+str(b); None -> empty segment.",
+      "tags": ["string", "io"],
+      "demo_stub_cases": [
+        {"inputs": [1, 2], "expected_outputs": {"0": "1|2"}, "strict": true},
+        {"inputs": [3.5, 0], "expected_outputs": {"0": "3.5|0"}, "strict": false}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [null, 9], "expected_outputs": {"0": "|9"}, "strict": true},
+        {"inputs": [9, null], "expected_outputs": {"0": "9|"}, "strict": true}
+      ]
+    },
+    {
+      "task_id": "N16",
+      "band": "L2",
+      "title": "Ordered Triple Check",
+      "class_name_suggestion": "OrderedTripleNode",
+      "description_zh": "若 a<=b<=c（数值比较）输出 1，否则 0。",
+      "inputs": [
+        {"label": "a", "type": "data"},
+        {"label": "b", "type": "data"},
+        {"label": "c", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "ok", "type": "data"}
+      ],
+      "core_logic_requirement": "float coercion; any invalid -> 0.",
+      "tags": ["logic", "compare"],
+      "demo_stub_cases": [
+        {"inputs": [1, 2, 3], "expected_outputs": {"0": 1}, "strict": true},
+        {"inputs": [1, 3, 2], "expected_outputs": {"0": 0}, "strict": true}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [2, 2, 2], "expected_outputs": {"0": 1}, "strict": true},
+        {"inputs": [null, 1, 2], "expected_outputs": {"0": 0}, "strict": true}
+      ]
+    },
+    {
+      "task_id": "N17",
+      "band": "L3",
+      "title": "Mean Skip None",
+      "class_name_suggestion": "MeanThreeNode",
+      "description_zh": "三数均值，跳过 None；若全无有效数输出 0.0。",
+      "inputs": [
+        {"label": "a", "type": "data"},
+        {"label": "b", "type": "data"},
+        {"label": "c", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "mean", "type": "data"}
+      ],
+      "core_logic_requirement": "Collect numeric values only; mean or 0.0.",
+      "tags": ["stats", "robustness"],
+      "demo_stub_cases": [
+        {"inputs": [10, 20, 30], "expected_outputs": {"0": 20.0}, "strict": false},
+        {"inputs": [1, 2, null], "expected_outputs": {"0": 1.5}, "strict": false}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [null, null, null], "expected_outputs": {"0": 0.0}, "strict": false},
+        {"inputs": ["2", "4", "6"], "expected_outputs": {"0": 4.0}, "strict": false}
+      ]
+    },
+    {
+      "task_id": "N18",
+      "band": "L3",
+      "title": "Parse Float With Default",
+      "class_name_suggestion": "ParseFloatNode",
+      "description_zh": "将字符串解析为 float；失败返回默认哨兵 -1.0。",
+      "inputs": [
+        {"label": "text", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "value", "type": "data"}
+      ],
+      "core_logic_requirement": "try float(str(text)) except -> -1.0; None -> -1.0.",
+      "tags": ["parsing", "robustness"],
+      "demo_stub_cases": [
+        {"inputs": ["3.14"], "expected_outputs": {"0": 3.14}, "strict": false},
+        {"inputs": ["-2"], "expected_outputs": {"0": -2.0}, "strict": false}
+      ],
+      "robust_stub_cases": [
+        {"inputs": ["not_a_number"], "expected_outputs": {"0": -1.0}, "strict": true},
+        {"inputs": [null], "expected_outputs": {"0": -1.0}, "strict": true},
+        {"inputs": [""], "expected_outputs": {"0": -1.0}, "strict": true}
+      ]
+    },
+    {
+      "task_id": "N19",
+      "band": "L3",
+      "title": "Piecewise Square Root",
+      "class_name_suggestion": "PiecewiseSqrtNode",
+      "description_zh": "x<0 输出 x*x；x==0 输出 0；x>0 输出 sqrt(x)。需 math.sqrt。",
+      "inputs": [
+        {"label": "x", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "y", "type": "data"}
+      ],
+      "core_logic_requirement": "Use math module; coerce x to float; invalid -> 0.0 or documented.",
+      "tags": ["math", "piecewise"],
+      "demo_stub_cases": [
+        {"inputs": [4], "expected_outputs": {"0": 2.0}, "strict": false},
+        {"inputs": [0], "expected_outputs": {"0": 0.0}, "strict": false},
+        {"inputs": [-2], "expected_outputs": {"0": 4.0}, "strict": false}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [null], "expected_outputs": {"0": 0.0}, "strict": false},
+        {"inputs": ["9"], "expected_outputs": {"0": 3.0}, "strict": false}
+      ]
+    },
+    {
+      "task_id": "N20",
+      "band": "L3",
+      "title": "Min-Max Normalize",
+      "class_name_suggestion": "MinMaxNormNode",
+      "description_zh": "将 x 按 [lo,hi] 归一化到 [0,1]：(x-lo)/(hi-lo)；hi==lo 时输出 0.5。",
+      "inputs": [
+        {"label": "x", "type": "data"},
+        {"label": "lo", "type": "data"},
+        {"label": "hi", "type": "data"}
+      ],
+      "outputs": [
+        {"label": "n", "type": "data"}
+      ],
+      "core_logic_requirement": "Float coercion; degenerate hi==lo -> 0.5; clamp optional.",
+      "tags": ["ml", "normalize"],
+      "demo_stub_cases": [
+        {"inputs": [5, 0, 10], "expected_outputs": {"0": 0.5}, "strict": false},
+        {"inputs": [0, 0, 10], "expected_outputs": {"0": 0.0}, "strict": false},
+        {"inputs": [10, 0, 10], "expected_outputs": {"0": 1.0}, "strict": false}
+      ],
+      "robust_stub_cases": [
+        {"inputs": [3, 5, 5], "expected_outputs": {"0": 0.5}, "strict": true},
+        {"inputs": [null, 0, 1], "expected_outputs": {"0": 0.5}, "strict": false},
+        {"inputs": [7, 10, 0], "expected_outputs": {"0": 0.5}, "strict": true, "note": "unordered lo/hi: implement swap so norm still in [0,1]"}
+      ]
+    }
+  ]
+}

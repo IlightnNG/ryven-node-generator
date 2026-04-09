@@ -1,0 +1,1715 @@
+{
+  "schema_version": "node_tasks_bench_sat_ml_v1",
+  "source_md": "scripts/evaluation/data/node_tasks_bench_sat_ml_en.md",
+  "description": "20 satellite / attitude / TF / PyTorch benchmark tasks aligned with node_tasks_bench_sat_ml_en.md. Ports are fixed for automated stub_runner checks. core_logic uses self.get_input_val(i) and self.set_output_val(j, Data(...)). N13–N14 require tensorflow; N15–N16, N20 require torch. Some L3 rows use strict:false for float/sign tolerance.",
+  "tasks": [
+    {
+      "task_id": "N01",
+      "band": "L1",
+      "title": "Body-frame direction normalize",
+      "class_name_suggestion": "SatNormalizeDirNode",
+      "description_zh": "将三维方向向量单位化（L2=1）；零向量按约定输出。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "raw_v",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "unit_v",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "Input: length-3 iterable raw_v. Output unit_v = raw_v / ||raw_v|| if norm > eps else Data([0.0,0.0,0.0]) (document eps). Use numpy.",
+      "tags": [
+        "satellite",
+        "vector"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              3.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": true
+        },
+        {
+          "inputs": [
+            [
+              0.0,
+              4.0,
+              0.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              0.0,
+              1.0,
+              0.0
+            ]
+          },
+          "strict": true
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": true
+        },
+        {
+          "inputs": [
+            null
+          ],
+          "expected_outputs": {
+            "0": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": false
+        }
+      ]
+    },
+    {
+      "task_id": "N02",
+      "band": "L1",
+      "title": "Magnetometer magnitude and unit vector",
+      "class_name_suggestion": "SatMagUnitNode",
+      "description_zh": "三轴磁强计模长与单位方向。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "b",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "mag",
+          "type": "data"
+        },
+        {
+          "label": "b_hat",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "b is length-3. Output mag = float norm; b_hat = b/mag if mag>eps else Data([0,0,0]). Match numpy.linalg.norm.",
+      "tags": [
+        "satellite",
+        "vector"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              0.0,
+              0.0,
+              5.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": 5.0,
+            "1": [
+              0.0,
+              0.0,
+              1.0
+            ]
+          },
+          "strict": true
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": 0.0,
+            "1": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": false
+        }
+      ]
+    },
+    {
+      "task_id": "N03",
+      "band": "L1",
+      "title": "Angle between 3D vectors (rad)",
+      "class_name_suggestion": "SatVecAngleNode",
+      "description_zh": "两向量夹角 [0, pi]（弧度）。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "u",
+          "type": "data"
+        },
+        {
+          "label": "v",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "angle",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "u,v length-3. angle = arccos(clip(dot(u_hat,v_hat),-1,1)) with safe handling of zero vectors (return 0.0 or documented sentinel).",
+      "tags": [
+        "satellite",
+        "geometry"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0
+            ]
+          ],
+          "expected_outputs": {
+            "0": 0.0
+          },
+          "strict": false
+        },
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ]
+          ],
+          "expected_outputs": {
+            "0": 1.5707963267948966
+          },
+          "strict": false
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0
+            ]
+          ],
+          "expected_outputs": {
+            "0": 0.0
+          },
+          "strict": false
+        }
+      ]
+    },
+    {
+      "task_id": "N04",
+      "band": "L1",
+      "title": "Cross and scalar triple product",
+      "class_name_suggestion": "SatCrossTripleNode",
+      "description_zh": "叉积与混合积。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "a",
+          "type": "data"
+        },
+        {
+          "label": "b",
+          "type": "data"
+        },
+        {
+          "label": "c",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "axb",
+          "type": "data"
+        },
+        {
+          "label": "triple",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "a,b,c length-3. axb = numpy.cross(a,b); triple = numpy.dot(c, axb).",
+      "tags": [
+        "satellite",
+        "vector"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "1": 1.0
+          },
+          "strict": true
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "1": 0.0
+          },
+          "strict": true
+        }
+      ]
+    },
+    {
+      "task_id": "N05",
+      "band": "L1",
+      "title": "Quaternion conjugate (Hamilton w,x,y,z)",
+      "class_name_suggestion": "SatQuatConjNode",
+      "description_zh": "四元数共轭 q*。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "q",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "q_conj",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "q = [w,x,y,z] Hamilton. Conjugate [w,-x,-y,-z].",
+      "tags": [
+        "satellite",
+        "quaternion"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              1.0,
+              2.0,
+              3.0,
+              4.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              1.0,
+              -2.0,
+              -3.0,
+              -4.0
+            ]
+          },
+          "strict": true
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": false
+        }
+      ]
+    },
+    {
+      "task_id": "N06",
+      "band": "L1",
+      "title": "Quaternion normalization",
+      "class_name_suggestion": "SatQuatNormNode",
+      "description_zh": "四元数归一化。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "q",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "q_unit",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "q length-4, q_unit = q / ||q||_2 if norm>eps else documented sentinel (e.g. [1,0,0,0] or zeros).",
+      "tags": [
+        "satellite",
+        "quaternion"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              2.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": true
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": false
+        }
+      ]
+    },
+    {
+      "task_id": "N07",
+      "band": "L1",
+      "title": "Quaternion single-step integration",
+      "class_name_suggestion": "SatQuatIntegrateNode",
+      "description_zh": "角速度单步四元数积分。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "q_k",
+          "type": "data"
+        },
+        {
+          "label": "omega",
+          "type": "data"
+        },
+        {
+          "label": "dt",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "q_next",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "If float(dt)==0, output q_next equals q_k (element-wise). Otherwise implement one documented discrete step (first-order).",
+      "tags": [
+        "satellite",
+        "quaternion"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0,
+              0
+            ],
+            [
+              0.1,
+              0.2,
+              0.3
+            ],
+            0.0
+          ],
+          "expected_outputs": {
+            "0": [
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": true
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              0.6,
+              0.8,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            0.0
+          ],
+          "expected_outputs": {
+            "0": [
+              0.6,
+              0.8,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": true
+        }
+      ]
+    },
+    {
+      "task_id": "N08",
+      "band": "L1",
+      "title": "Gyro bias correction",
+      "class_name_suggestion": "SatGyroBiasNode",
+      "description_zh": "陀螺角速度减偏置。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "omega_raw",
+          "type": "data"
+        },
+        {
+          "label": "bias",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "omega_corr",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "Element-wise omega_raw - bias; length-3; None components -> 0.0.",
+      "tags": [
+        "satellite",
+        "gyro"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              1.0,
+              2.0,
+              3.0
+            ],
+            [
+              0.0,
+              1.0,
+              2.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              1.0,
+              1.0,
+              1.0
+            ]
+          },
+          "strict": true
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              1.0,
+              2.0,
+              3.0
+            ],
+            null
+          ],
+          "expected_outputs": {
+            "0": [
+              1.0,
+              2.0,
+              3.0
+            ]
+          },
+          "strict": false
+        }
+      ]
+    },
+    {
+      "task_id": "N09",
+      "band": "L2",
+      "title": "DCM times body vector",
+      "class_name_suggestion": "SatDcmApplyNode",
+      "description_zh": "方向余弦矩阵乘体轴向量（行主序 9 标量 + 3 向量）。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "R_flat",
+          "type": "data"
+        },
+        {
+          "label": "v_b",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "v_r",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "R_flat: 9 floats row-major 3x3 mapping v_r = R @ v_b (body to reference). Use numpy.reshape(3,3).",
+      "tags": [
+        "satellite",
+        "attitude"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              1,
+              2,
+              3
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              1.0,
+              2.0,
+              3.0
+            ]
+          },
+          "strict": true
+        },
+        {
+          "inputs": [
+            [
+              0,
+              -1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              0.0,
+              1.0,
+              0.0
+            ]
+          },
+          "strict": true
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              0,
+              0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": true
+        }
+      ]
+    },
+    {
+      "task_id": "N10",
+      "band": "L2",
+      "title": "TRIAD precursor orthonormal frame",
+      "class_name_suggestion": "SatTriadPrecursorNode",
+      "description_zh": "由两体轴观测构造正交标架（3×3）。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "b1",
+          "type": "data"
+        },
+        {
+          "label": "b2",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "T_flat",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "Unit b1,b2 (non-collinear). t1=b1/||b1||, t2=cross(b1,b2) normalized, t3=cross(t1,t2). Output T_flat: 9 floats row-major 3x3 with columns t1,t2,t3.",
+      "tags": [
+        "satellite",
+        "triad"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              1,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              -1,
+              0
+            ]
+          },
+          "strict": false
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          "strict": false
+        }
+      ]
+    },
+    {
+      "task_id": "N11",
+      "band": "L2",
+      "title": "Weighted direction fusion (N=4)",
+      "class_name_suggestion": "SatWahbaWeightsNode",
+      "description_zh": "四组加权单位向量融合为单位方向。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "v1",
+          "type": "data"
+        },
+        {
+          "label": "v2",
+          "type": "data"
+        },
+        {
+          "label": "v3",
+          "type": "data"
+        },
+        {
+          "label": "v4",
+          "type": "data"
+        },
+        {
+          "label": "w1",
+          "type": "data"
+        },
+        {
+          "label": "w2",
+          "type": "data"
+        },
+        {
+          "label": "w3",
+          "type": "data"
+        },
+        {
+          "label": "w4",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "u_out",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "Weighted sum s = w1*v1+...+w4*v4; if ||s||<eps return [1,0,0] or documented sentinel; else output s/||s||.",
+      "tags": [
+        "satellite",
+        "fusion"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_outputs": {
+            "0": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": true
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              0,
+              1
+            ],
+            [
+              1,
+              0,
+              0
+            ],
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "expected_outputs": {
+            "0": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": false
+        }
+      ]
+    },
+    {
+      "task_id": "N12",
+      "band": "L2",
+      "title": "QUEST K-matrix assembly",
+      "class_name_suggestion": "SatQuestKNode",
+      "description_zh": "组装 4×4 对称 K（与 numpy 参考一致）。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "b1",
+          "type": "data"
+        },
+        {
+          "label": "r1",
+          "type": "data"
+        },
+        {
+          "label": "a1",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "K_flat",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "Single observation n=1. Build B=a1*outer(b1,r1), z=a1*cross(b1,r1), S=B+B.T, sig=trace(B), K[0,0]=sig; K[0,1:]=z; K[1:,0]=z; K[1:,1:]=S-sig*I. Output K_flat row-major 16.",
+      "tags": [
+        "satellite",
+        "quest"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0
+            ],
+            1.0
+          ],
+          "expected_outputs": {
+            "0": [
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              -1.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              -1.0
+            ]
+          },
+          "strict": true
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            1.0
+          ],
+          "expected_outputs": {
+            "0": [
+              0.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              1.0,
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": true
+        }
+      ]
+    },
+    {
+      "task_id": "N13",
+      "band": "L2",
+      "title": "TF binary cross-entropy (from logits)",
+      "class_name_suggestion": "SatTfBceNode",
+      "description_zh": "TensorFlow：二元交叉熵标量。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "logits",
+          "type": "data"
+        },
+        {
+          "label": "targets",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "loss",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "import tensorflow as tf. logits/targets rank-1 lists same length. loss = mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=targets, logits=logits)). Output Python float (e.g. float(loss.numpy())).",
+      "tags": [
+        "tensorflow",
+        "loss"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              0.0
+            ],
+            [
+              1.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": 0.6931471805599453
+          },
+          "strict": false
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              1.0,
+              0.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": 0.6931471805599453
+          },
+          "strict": false
+        }
+      ],
+      "acceptance_note": "Requires tensorflow installed. strict:false for float noise."
+    },
+    {
+      "task_id": "N14",
+      "band": "L2",
+      "title": "TF dense linear layer",
+      "class_name_suggestion": "SatTfDenseNode",
+      "description_zh": "TensorFlow：线性层 y = x @ W.T + b。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "x",
+          "type": "data"
+        },
+        {
+          "label": "W_flat",
+          "type": "data"
+        },
+        {
+          "label": "b",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "y",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "x length-2 row vector, W_flat 4 floats row-major 2x2, b length-2. y = x @ W.T + b as Python list of floats.",
+      "tags": [
+        "tensorflow",
+        "linear"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              2.0,
+              3.0
+            ],
+            [
+              1,
+              0,
+              0,
+              1
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              2.0,
+              3.0
+            ]
+          },
+          "strict": false
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              1.0,
+              0.0
+            ],
+            [
+              1,
+              0,
+              0,
+              1
+            ],
+            [
+              0.5,
+              -0.5
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              1.5,
+              -0.5
+            ]
+          },
+          "strict": false
+        }
+      ],
+      "acceptance_note": "Requires tensorflow."
+    },
+    {
+      "task_id": "N15",
+      "band": "L2",
+      "title": "PyTorch ReLU",
+      "class_name_suggestion": "SatTorchReluNode",
+      "description_zh": "PyTorch ReLU 前向。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "x",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "y",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "import torch. y = torch.relu(torch.tensor(x, dtype=torch.float32)).tolist()",
+      "tags": [
+        "pytorch",
+        "activation"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              -1.0,
+              2.0,
+              0.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              0.0,
+              2.0,
+              0.0
+            ]
+          },
+          "strict": false
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              1.0,
+              -2.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              1.0,
+              0.0
+            ]
+          },
+          "strict": false
+        }
+      ],
+      "acceptance_note": "Requires torch. Flatten nested list inputs in core_logic if needed."
+    },
+    {
+      "task_id": "N16",
+      "band": "L2",
+      "title": "PyTorch softmax",
+      "class_name_suggestion": "SatTorchSoftmaxNode",
+      "description_zh": "PyTorch softmax(dim)。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "x",
+          "type": "data"
+        },
+        {
+          "label": "dim",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "p",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "import torch. dim=int(dim). p = torch.softmax(torch.tensor(x,float), dim=dim).tolist()",
+      "tags": [
+        "pytorch",
+        "activation"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              1.0,
+              1.0
+            ],
+            0
+          ],
+          "expected_outputs": {
+            "0": [
+              0.5,
+              0.5
+            ]
+          },
+          "strict": false
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              0.0,
+              0.0,
+              0.0
+            ],
+            0
+          ],
+          "expected_outputs": {
+            "0": [
+              0.3333333333333333,
+              0.3333333333333333,
+              0.3333333333333333
+            ]
+          },
+          "strict": false
+        }
+      ],
+      "acceptance_note": "Requires torch."
+    },
+    {
+      "task_id": "N17",
+      "band": "L3",
+      "title": "Full TRIAD attitude DCM",
+      "class_name_suggestion": "SatTriadFullNode",
+      "description_zh": "TRIAD 双矢量定姿 DCM（行主序）。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "b1",
+          "type": "data"
+        },
+        {
+          "label": "b2",
+          "type": "data"
+        },
+        {
+          "label": "r1",
+          "type": "data"
+        },
+        {
+          "label": "r2",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "R_flat",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "Noiseless: b1=r1=[1,0,0], b2=r2=[0,1,0] implies R=I. Implement Black TRIAD so R @ b_hat ~ r_hat; output R_flat row-major I for this case.",
+      "tags": [
+        "satellite",
+        "triad"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              1,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          "strict": false
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              0,
+              1,
+              0
+            ],
+            [
+              -1,
+              0,
+              0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              0,
+              -1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              1
+            ]
+          },
+          "strict": false
+        }
+      ],
+      "acceptance_note": "Second case: 90° about +z (noiseless); strict:false for numerical variation."
+    },
+    {
+      "task_id": "N18",
+      "band": "L3",
+      "title": "QUEST eigen quaternion",
+      "class_name_suggestion": "SatQuestQNode",
+      "description_zh": "QUEST：K 矩阵 + 最大特征值特征向量 → 单位四元数。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "b1",
+          "type": "data"
+        },
+        {
+          "label": "r1",
+          "type": "data"
+        },
+        {
+          "label": "a1",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "q",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "n=1. Build K same as N12. q = eigenvector for largest eigenvalue of K (numpy.linalg.eigh); normalize to unit length. Sign: match positive w if possible.",
+      "tags": [
+        "satellite",
+        "quest"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0
+            ],
+            1.0
+          ],
+          "expected_outputs": {
+            "0": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": false
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              1,
+              0,
+              0
+            ],
+            [
+              1,
+              0,
+              0
+            ],
+            1.0
+          ],
+          "expected_outputs": {
+            "0": [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "strict": false
+        }
+      ],
+      "acceptance_note": "Eigenvector sign non-unique; strict:false. Requires numpy."
+    },
+    {
+      "task_id": "N19",
+      "band": "L3",
+      "title": "TF one SGD step",
+      "class_name_suggestion": "SatTfSgdStepNode",
+      "description_zh": "TensorFlow 单步梯度下降。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "x",
+          "type": "data"
+        },
+        {
+          "label": "y",
+          "type": "data"
+        },
+        {
+          "label": "w",
+          "type": "data"
+        },
+        {
+          "label": "b",
+          "type": "data"
+        },
+        {
+          "label": "eta",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "w_new",
+          "type": "data"
+        },
+        {
+          "label": "b_new",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "L = (y - w*x - b)**2 scalars. One step w -= eta*grad_w, b -= eta*grad_b with GradientTape. x=1,y=1,w=0,b=0,eta=0.1 -> w_new=0.2, b_new=0.2.",
+      "tags": [
+        "tensorflow",
+        "optim"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            1.0,
+            1.0,
+            0.0,
+            0.0,
+            0.1
+          ],
+          "expected_outputs": {
+            "0": 0.2,
+            "1": 0.2
+          },
+          "strict": false
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            1.0,
+            2.0,
+            0.0,
+            0.0,
+            0.1
+          ],
+          "expected_outputs": {
+            "0": 0.4,
+            "1": 0.2
+          },
+          "strict": false
+        }
+      ],
+      "acceptance_note": "Requires tensorflow. Gradients dL/dw = -2*x*(y-w*x-b), dL/db = -2*(y-w*x-b)."
+    },
+    {
+      "task_id": "N20",
+      "band": "L3",
+      "title": "PyTorch BN+MLP inference",
+      "class_name_suggestion": "SatTorchBnMlpNode",
+      "description_zh": "PyTorch 两层 MLP + BN 推理。",
+      "description_en": "",
+      "inputs": [
+        {
+          "label": "x",
+          "type": "data"
+        }
+      ],
+      "outputs": [
+        {
+          "label": "logits",
+          "type": "data"
+        }
+      ],
+      "core_logic_requirement": "import torch.nn as nn. Fixed 2->2->2 MLP: Linear(2,2), BatchNorm1d(2), ReLU, Linear(2,2). Use eval(); running_mean=0, running_var=1, gamma=1, beta=0, weights I and zero bias where possible; input x length-2 -> logits list length-2. Document parameters inside core_logic.",
+      "tags": [
+        "pytorch",
+        "mlp"
+      ],
+      "demo_stub_cases": [
+        {
+          "inputs": [
+            [
+              0.0,
+              0.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              0.0,
+              0.0
+            ]
+          },
+          "strict": false
+        }
+      ],
+      "robust_stub_cases": [
+        {
+          "inputs": [
+            [
+              1.0,
+              -1.0
+            ]
+          ],
+          "expected_outputs": {
+            "0": [
+              0.0,
+              0.0
+            ]
+          },
+          "strict": false
+        }
+      ],
+      "acceptance_note": "Exact logits depend on BN eps and default Linear init; stub uses strict:false — tighten in custom harness if needed."
+    }
+  ]
+}

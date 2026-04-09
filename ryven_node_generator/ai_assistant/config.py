@@ -89,6 +89,31 @@ def get_temperature() -> float:
         return 0.2
 
 
+def get_llm_request_timeout_sec() -> float | None:
+    """HTTP timeout (seconds) for each ``ChatOpenAI.invoke`` / stream call.
+
+    Prevents headless benchmarks from hanging forever when the API stalls.
+    Set ``LLM_REQUEST_TIMEOUT=0`` or ``none`` to disable (not recommended).
+
+    Also accepts ``OPENAI_TIMEOUT`` as an alias.
+    """
+    raw = os.getenv("LLM_REQUEST_TIMEOUT", "").strip()
+    if not raw:
+        raw = os.getenv("OPENAI_TIMEOUT", "180").strip()
+    else:
+        raw = raw.strip()
+    low = raw.lower()
+    if low in ("0", "none", "off", "false", "unlimited", "no"):
+        return None
+    try:
+        v = float(raw)
+    except ValueError:
+        return 180.0
+    if v <= 0:
+        return None
+    return min(3600.0, max(5.0, v))
+
+
 def get_base_url() -> str | None:
     u = os.getenv("OPENAI_BASE_URL", "").strip().rstrip("/")
     if u:

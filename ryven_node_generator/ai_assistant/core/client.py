@@ -6,7 +6,13 @@ from typing import Any
 
 from langchain_openai import ChatOpenAI
 
-from ..config import get_base_url, get_model_name, get_openai_api_key, get_temperature
+from ..config import (
+    get_base_url,
+    get_llm_request_timeout_sec,
+    get_model_name,
+    get_openai_api_key,
+    get_temperature,
+)
 
 
 def build_chat_model() -> ChatOpenAI:
@@ -26,5 +32,9 @@ def build_chat_model() -> ChatOpenAI:
     base_url = get_base_url()
     if base_url:
         kwargs["base_url"] = base_url
+
+    tout = get_llm_request_timeout_sec()
+    if tout is not None:
+        kwargs["timeout"] = tout
 
     return ChatOpenAI(**kwargs)

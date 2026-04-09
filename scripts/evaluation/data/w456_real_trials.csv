@@ -1,0 +1,4 @@
+﻿task_id,task_band,workflow,workflow_label,run_id,operator,time_to_demo_min,instant_demo_ok,time_to_robust_min,final_robust_ok,validation_on,uses_generator,loop_mode,llm_rounds,tool_calls,tokens_prompt,tokens_completion,tokens_total,usage_steps,errors_top,latent_hardness,sim_schema
+N01,L1,W4_gen_single,W4 Generator + single-turn agent,1,automated_api_benchmark,0.4095,1,0.4095,1,1,1,single,5,4,27462,1071,28533,5,none,,node_tasks_bench_sat_ml_v1
+N01,L1,W5_gen_3stage,W5 Generator + 3-stage pipeline,1,automated_api_benchmark,0.4556,1,1.0729,1,1,1,3stage,11,11,61956,3623,65579,11,none,,node_tasks_bench_sat_ml_v1
+N01,L1,W6_gen_react,W6 Generator + ReAct tool loop,1,automated_api_benchmark,0.4333,1,0.4333,1,1,1,react,4,4,22194,1237,23431,4,none,,node_tasks_bench_sat_ml_v1

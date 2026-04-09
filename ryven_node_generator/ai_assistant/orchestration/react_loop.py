@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import copy
 import json
+import os
+import sys
 import uuid
 from pathlib import Path
 from typing import Any, Callable
@@ -15,6 +17,7 @@ from ..config import (
     ai_agent_session_log_path,
     ai_context_compact_node_json,
     default_agent_project_root,
+    get_llm_request_timeout_sec,
     load_env,
 )
 from ..context_budget import build_node_context_json
@@ -215,6 +218,54 @@ def _merge_core_logic_from_draft(turn: AssistantTurn, draft_node: dict[str, Any]
     return turn.model_copy(update={"core_logic": cl})
 
 
+def _usage_delta_from_ai_message(ai: Any) -> tuple[int, int, int] | None:
+    """Per-completion token counts from one ``model.invoke`` return value.
+
+    Uses LangChain ``AIMessage.usage_metadata`` (input/output/total) or legacy
+    ``response_metadata['token_usage']`` (prompt/completion/total). Returns
+    ``None`` if the provider did not report usage for this call.
+    """
+    prompt: int | None = None
+    completion: int | None = None
+    total: int | None = None
+
+    um = getattr(ai, "usage_metadata", None)
+    if isinstance(um, dict):
+        it = um.get("input_tokens")
+        ot = um.get("output_tokens")
+        tt = um.get("total_tokens")
+        if isinstance(it, int):
+            prompt = it
+        if isinstance(ot, int):
+            completion = ot
+        if isinstance(tt, int):
+            total = tt
+
+    rm = getattr(ai, "response_metadata", None)
+    if isinstance(rm, dict):
+        tu = rm.get("token_usage")
+        if isinstance(tu, dict):
+            if prompt is None:
+                p = tu.get("prompt_tokens")
+                if isinstance(p, int):
+                    prompt = p
+            if completion is None:
+                c = tu.get("completion_tokens")
+                if isinstance(c, int):
+                    completion = c
+            if total is None:
+                t = tu.get("total_tokens")
+                if isinstance(t, int):
+                    total = t
+
+    if prompt is None and completion is None and total is None:
+        return None
+    p = int(prompt or 0)
+    c = int(completion or 0)
+    t = int(total) if total is not None else p + c
+    return p, c, t
+
+
 def _finalize_submit_turn(
     turn: AssistantTurn,
     draft_node: dict[str, Any],
@@ -314,6 +365,10 @@ def run_react_session(
     trace: list[dict[str, Any]] = []
     shell_request_seq = 0
     last_step_tool_names: list[str] = []
+    acc_prompt_tokens = 0
+    acc_completion_tokens = 0
+    acc_total_tokens = 0
+    usage_reported_steps = 0
     nudge_default = (
         "You must use the provided tools only (no raw <<<JSON>>>). "
         "Pick tools by the user request: do not call read_project_file, apply_node_patch, "
@@ -344,9 +399,38 @@ def run_react_session(
                 }
             )
 
-        ai = model.invoke(messages)
+        if os.getenv("BENCHMARK_LLM_STEP_LOG", "").lower() in ("1", "true", "yes"):
+            to = get_llm_request_timeout_sec()
+            ts = f"{to:g}s" if to is not None else "none"
+            print(
+                f"[llm] ReAct step {step}/{max_steps} (HTTP timeout={ts}) …",
+                flush=True,
+                file=sys.stderr,
+            )
+
+        try:
+            ai = model.invoke(messages)
+        except Exception as exc:
+            if log_path:
+                _log_event({"event": "llm_invoke_error", "step": step, "error": repr(exc)})
+            low = str(exc).lower()
+            if "timeout" in low or "timed out" in low:
+                raise RuntimeError(
+                    f"LLM HTTP timeout or stall at ReAct step {step}/{max_steps}: {exc!r}. "
+                    "Set a larger LLM_REQUEST_TIMEOUT in .env (seconds), or fix network/API."
+                ) from exc
+            raise
+
         if log_path:
             _log_event({"event": "llm_response", "step": step, "message": serialize_message(ai, field_chars)})
+
+        usage_triple = _usage_delta_from_ai_message(ai)
+        if usage_triple is not None:
+            dp, dc, dt = usage_triple
+            acc_prompt_tokens += dp
+            acc_completion_tokens += dc
+            acc_total_tokens += dt
+            usage_reported_steps += 1
 
         if not getattr(ai, "tool_calls", None):
             messages.append(ai)
@@ -609,12 +693,26 @@ def run_react_session(
                     "ok": True,
                     "step": step,
                     "message_preview": (turn.message or "")[:4000],
+                    "llm_prompt_tokens": acc_prompt_tokens if usage_reported_steps else None,
+                    "llm_completion_tokens": acc_completion_tokens if usage_reported_steps else None,
+                    "llm_total_tokens": acc_total_tokens if usage_reported_steps else None,
+                    "llm_usage_steps": usage_reported_steps,
                 }
             )
+            if usage_reported_steps:
+                out["llm_prompt_tokens"] = acc_prompt_tokens
+                out["llm_completion_tokens"] = acc_completion_tokens
+                out["llm_total_tokens"] = acc_total_tokens
+                out["llm_usage_steps"] = usage_reported_steps
+            else:
+                out["llm_prompt_tokens"] = None
+                out["llm_completion_tokens"] = None
+                out["llm_total_tokens"] = None
+                out["llm_usage_steps"] = 0
             return out
 
     _log_event({"event": "session_end", "ok": False, "reason": "max_steps", "max_steps": max_steps})
-    return {
+    out_fail: dict[str, Any] = {
         "message": f"ReAct stopped after {max_steps} model steps without a successful submit_node_turn. "
         "Try simplifying the request or increase AI_AGENT_MAX_STEPS.",
         "core_logic": None,
@@ -625,3 +723,14 @@ def run_react_session(
         "react_trace": trace,
         "repair_round": max_steps,
     }
+    if usage_reported_steps:
+        out_fail["llm_prompt_tokens"] = acc_prompt_tokens
+        out_fail["llm_completion_tokens"] = acc_completion_tokens
+        out_fail["llm_total_tokens"] = acc_total_tokens
+        out_fail["llm_usage_steps"] = usage_reported_steps
+    else:
+        out_fail["llm_prompt_tokens"] = None
+        out_fail["llm_completion_tokens"] = None
+        out_fail["llm_total_tokens"] = None
+        out_fail["llm_usage_steps"] = 0
+    return out_fail
