@@ -1,0 +1,9 @@
+Jinja2>=3
+PySide6>=6
+
+[ai]
+langchain<2,>=1.2.13
+langchain-core<2,>=1.2.20
+langchain-openai<2,>=1.1.11
+pydantic<3,>=2.12.5
+python-dotenv<2,>=1.2.2

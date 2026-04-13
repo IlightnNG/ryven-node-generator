@@ -15,8 +15,6 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import QThread, Signal
 
-from ryven_node_generator.ai_assistant.orchestration import run_agent_session
-
 from .constants import EDITOR_ROW_H, INPUT_WIDGET_EXAMPLES
 
 
@@ -103,6 +101,10 @@ class _AITurnWorker(QThread):
 
     def run(self):
         try:
+            # Defer import so `pip install .` (without [ai]) still launches the UI;
+            # LangChain / dotenv are only required when the user runs an assistant turn.
+            from ryven_node_generator.ai_assistant.orchestration import run_agent_session
+
             r = run_agent_session(
                 user_text=self._user_text,
                 current_node=self._current_node,

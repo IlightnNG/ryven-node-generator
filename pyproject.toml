@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ryven-node-generator"
+version = "0.1.0"
+description = "Visual studio and code generation for Ryven-compatible node packages"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Ryven Node Generator contributors" }]
+keywords = ["ryven", "node", "generator", "pyside6"]
+dependencies = [
+  "Jinja2>=3",
+  "PySide6>=6",
+]
+
+[project.optional-dependencies]
+ai = [
+  "langchain>=1.2.13,<2",
+  "langchain-core>=1.2.20,<2",
+  "langchain-openai>=1.1.11,<2",
+  "pydantic>=2.12.5,<3",
+  "python-dotenv>=1.2.2,<2",
+]
+
+[project.scripts]
+ryven-node-generator = "ryven_node_generator.ui.main_window:run_app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ryven_node_generator*"]
+
+[tool.setuptools.package-data]
+ryven_node_generator = ["assets/widget_template.py"]

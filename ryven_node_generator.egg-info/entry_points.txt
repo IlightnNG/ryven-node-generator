@@ -1,0 +1,2 @@
+[console_scripts]
+ryven-node-generator = ryven_node_generator.ui.main_window:run_app
