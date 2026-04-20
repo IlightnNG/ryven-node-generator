@@ -65,7 +65,6 @@ class GeneratorDesignerUI(QMainWindow):
         self._ai_worker = None
         self._ai_shell_approval_controller: ShellApprovalController | None = None
         self._ai_tab_widget = None
-        self._ai_streaming_this_turn = False
         self._ai_turn_in_progress = False
         self._ai_pin_chat_to_bottom = True
         self._ai_preview_active = False
@@ -324,9 +323,6 @@ class GeneratorDesignerUI(QMainWindow):
             w = item.widget()
             if w is None:
                 continue
-            if w is getattr(self, "_ai_streaming_block", None):
-                w.setParent(None)
-                continue
             w.deleteLater()
 
         h = self._ai_history
@@ -380,19 +376,6 @@ class GeneratorDesignerUI(QMainWindow):
                 lay.addWidget(self._ai_make_system_block_bubble(lines, block_key=f"{start}:{i}"))
             else:
                 i += 1
-
-        if self._ai_turn_in_progress:
-            self._ai_streaming_editor.clear()
-            self._ai_streaming_editor.setPlaceholderText(
-                ""
-                if getattr(self, "_ai_streaming_this_turn", False)
-                else "Waiting for response…"
-            )
-            self._ai_streaming_block.setVisible(True)
-            lay.addWidget(self._ai_streaming_block)
-        else:
-            self._ai_streaming_block.setVisible(False)
-            self._ai_streaming_block.setParent(None)
 
         lay.addStretch(1)
         self._ai_force_chat_to_bottom()
@@ -953,21 +936,6 @@ class GeneratorDesignerUI(QMainWindow):
         self.ai_chat_messages_layout.setSpacing(10)
         self.ai_chat_scroll.setWidget(self.ai_chat_inner)
         self.ai_chat_scroll.verticalScrollBar().rangeChanged.connect(self._ai_on_chat_range_changed)
-
-        self._ai_streaming_block = QWidget()
-        _sbl = QVBoxLayout(self._ai_streaming_block)
-        _sbl.setContentsMargins(0, 0, 0, 0)
-        _sbl.setSpacing(4)
-        _stream_meta = QLabel("Assistant")
-        _stream_meta.setObjectName("AiChatMeta")
-        self._ai_streaming_editor = QTextEdit()
-        self._ai_streaming_editor.setObjectName("AiStreamEditor")
-        self._ai_streaming_editor.setReadOnly(True)
-        self._ai_streaming_editor.setMinimumHeight(88)
-        self._ai_streaming_editor.setPlaceholderText("…")
-        _sbl.addWidget(_stream_meta)
-        _sbl.addWidget(self._ai_streaming_editor)
-        self._ai_streaming_block.setVisible(False)
 
         self.ai_context_label = QLabel("AI context node: —")
         self.ai_context_label.setWordWrap(True)
@@ -1656,17 +1624,6 @@ class GeneratorDesignerUI(QMainWindow):
         else:
             self._ai_refresh_commit_buttons()
 
-    def _ai_begin_assistant_stream(self):
-        self._ai_streaming_editor.clear()
-        self._ai_streaming_editor.setPlaceholderText("AI is thinking and generating…")
-
-    def _ai_on_stream_delta(self, s: str):
-        if not s:
-            return
-        self._ai_streaming_editor.moveCursor(QTextCursor.End)
-        self._ai_streaming_editor.insertPlainText(s)
-        self._ai_streaming_editor.ensureCursorVisible()
-
     def _ai_on_send(self):
         if self._ai_worker is not None and self._ai_worker.isRunning():
             self._ai_worker.stop()
@@ -1702,12 +1659,6 @@ class GeneratorDesignerUI(QMainWindow):
         if self._ai_tab_widget is not None:
             self.preview_tabs.setCurrentWidget(self._ai_tab_widget)
 
-        from ryven_node_generator.ai_assistant.config import ai_stream_enabled
-
-        self._ai_streaming_this_turn = ai_stream_enabled()
-        if self._ai_streaming_this_turn:
-            self._ai_begin_assistant_stream()
-
         node = copy.deepcopy(self.nodes_data[self.current_idx])
         names = [n.get("class_name", "") for n in self.nodes_data]
         self._ai_set_busy(True)
@@ -1722,7 +1673,6 @@ class GeneratorDesignerUI(QMainWindow):
             self,
             shell_approval_controller=self._ai_shell_approval_controller,
         )
-        self._ai_worker.stream_delta.connect(self._ai_on_stream_delta)
         self._ai_worker.progress_event.connect(self._ai_on_worker_progress)
         self._ai_worker.finished_ok.connect(self._ai_on_worker_ok)
         self._ai_worker.stopped.connect(self._ai_on_worker_stopped)
@@ -1839,15 +1789,6 @@ class GeneratorDesignerUI(QMainWindow):
     def _ai_on_worker_ok(self, result: dict):
         self._ai_turn_in_progress = False
         msg = result.get("message", "")
-        if getattr(self, "_ai_streaming_this_turn", False):
-            sr = result.get("_streamed_reply_plain") or ""
-            if len(sr) > 0 and msg.startswith(sr):
-                tail = msg[len(sr) :].lstrip("\n\r")
-                if tail.strip():
-                    self._ai_on_stream_delta("\n" + tail + "\n")
-            elif not result.get("_stream_had_visible_reply") and msg.strip():
-                self._ai_on_stream_delta(msg + "\n")
-            self._ai_on_stream_delta("\n")
         self._ai_history.append(("assistant", msg, {}))
         react_trace = result.get("react_trace") or []
         trace = result.get("repair_trace") or []

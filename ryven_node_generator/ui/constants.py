@@ -205,13 +205,6 @@ QLabel#AiBubbleBody {
     font-size: 12px;
     background: transparent;
 }
-QTextEdit#AiStreamEditor {
-    background-color: #161b22;
-    color: #cfd4dc;
-    border: 1px solid #323840;
-    border-radius: 8px;
-    padding: 8px;
-}
 QTextEdit#AiChatComposer {
     border: 1px solid #343b44;
     border-radius: 8px;
